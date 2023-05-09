@@ -1,0 +1,16 @@
+module Decoder #(parameter N=16)
+					 (input [N-1:0] instruction,
+						output logic MemoryWrite,
+						output [1:0] WriteRegFrom, //Bandera que indica de donde viene lo que vamos a escribir en el registro (memoria, imm, ALU)
+						output [3:0] RegToWrite,
+						output [7:0] Immediate);
+						
+	
+	
+	
+	
+	//Decodificacion directa
+	assign RegToWrite = instruction[8:11];
+
+
+endmodule
