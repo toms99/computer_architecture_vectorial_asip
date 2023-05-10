@@ -9,13 +9,13 @@ module fetchStage(
     register pcReg(
         .clk(clk),
         .reset(reset),
-        .dataIn(choosedPc),
-        .dataOut(pc) );
-    pcM4 = pc + 4;
-    choosedPc = pcWrEn ? newPc : pcM4;
+        .data_in(choosedPc),
+        .data_out(pc) );
+    assign pcM4 = pc + 4;
+    assign choosedPc = pcWrEn ? newPc : pcM4;
 
     instruction_memory rom(
-        .address(choosedPc),
+        .address(pc),
         .rdata(instruction) );
 
 endmodule
