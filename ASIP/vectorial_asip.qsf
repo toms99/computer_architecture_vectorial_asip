@@ -39,7 +39,7 @@
 
 set_global_assignment -name FAMILY "Cyclone IV GX"
 set_global_assignment -name DEVICE EP4CGX150DF31C7
-set_global_assignment -name TOP_LEVEL_ENTITY top
+set_global_assignment -name TOP_LEVEL_ENTITY fetchStage
 set_global_assignment -name ORIGINAL_QUARTUS_VERSION 21.1.0
 set_global_assignment -name PROJECT_CREATION_TIME_DATE "11:28:09  MAY 06, 2023"
 set_global_assignment -name LAST_QUARTUS_VERSION "21.1.0 Lite Edition"
@@ -58,7 +58,10 @@ set_global_assignment -name EDA_NATIVELINK_SIMULATION_TEST_BENCH tb_top -section
 set_global_assignment -name EDA_TEST_BENCH_NAME tb_top -section_id eda_simulation
 set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id tb_top
 set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME tb_top -section_id tb_top
-set_global_assignment -name SYSTEMVERILOG_FILE src/platform/top.sv
+set_global_assignment -name EDA_TEST_BENCH_FILE test_bench/tb_top.sv -section_id tb_top
+set_global_assignment -name SYSTEMVERILOG_FILE common/memory/instruction_memory/instruction_memory.sv
+set_global_assignment -name SYSTEMVERILOG_FILE common/register.sv
+set_global_assignment -name SYSTEMVERILOG_FILE fetch/fetchStage.sv
 set_global_assignment -name TEXT_FILE src/memory/instruction_memory/ROM.txt
 set_global_assignment -name TEXT_FILE src/memory/data_memory/RAM.txt
 set_global_assignment -name SYSTEMVERILOG_FILE src/test_bench/tb_top.sv
