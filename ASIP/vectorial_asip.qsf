@@ -62,10 +62,6 @@ set_global_assignment -name EDA_TEST_BENCH_FILE test_bench/tb_top.sv -section_id
 set_global_assignment -name SYSTEMVERILOG_FILE common/memory/instruction_memory/instruction_memory.sv
 set_global_assignment -name SYSTEMVERILOG_FILE common/register.sv
 set_global_assignment -name SYSTEMVERILOG_FILE fetch/fetchStage.sv
-set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
-set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
-set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
-set_global_assignment -name SYSTEMVERILOG_FILE src/platform/top.sv
 set_global_assignment -name TEXT_FILE src/memory/instruction_memory/ROM.txt
 set_global_assignment -name TEXT_FILE src/memory/data_memory/RAM.txt
 set_global_assignment -name SYSTEMVERILOG_FILE src/test_bench/tb_top.sv
