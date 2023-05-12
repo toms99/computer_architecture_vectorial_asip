@@ -1,4 +1,4 @@
-module logic_decoder #(in=4, out=16) (
+module logic_decoder #(parameter in=4, parameter out=16) (
     input [in-1:0] sel,
     output [out-1:0] data_out
 );

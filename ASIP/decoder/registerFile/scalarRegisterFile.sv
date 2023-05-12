@@ -1,5 +1,5 @@
 // Register Quantity has to be a power of 2
-module scalarRegisterFile #(registerSize=8, registerQuantity=8) (
+module scalarRegisterFile #(parameter registerSize=8, parameter registerQuantity=8) (
     input clk, reset,
     input regWrEn,
     input [2:0] rSel1, rSel2,
@@ -11,17 +11,14 @@ module scalarRegisterFile #(registerSize=8, registerQuantity=8) (
     logic [registerQuantity:0] reg_N_WrEn;
     logic [registerQuantity:0] [registerSize-1:0] reg_N_Out;
 
-    logic_decoder #(
-        // log2(registerQuantity)
-        .in(3), 
-        .out(registerQuantity)) (
+    logic_decoder #(.in(3), .out(registerQuantity)) regWrDecoder(
         .sel(regToWrite), .data_out(reg_N_WrEn)
     );
 
     generate
         genvar i;
         for (i = 0; i < registerQuantity; i = i + 1) begin: REGISTER_BLOCK
-            register #(registerSize) r (
+            register #(registerSize-1) r (
                 .clk(clk & reg_N_WrEn[i] & regWrEn), .reset(reset),
                 .data_in(dataIn), .data_out(reg_N_Out[i])
             );

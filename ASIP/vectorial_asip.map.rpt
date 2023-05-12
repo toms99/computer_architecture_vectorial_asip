@@ -1,5 +1,5 @@
 Analysis & Synthesis report for vectorial_asip
-Fri May 12 13:42:36 2023
+Fri May 12 16:32:01 2023
 Quartus Prime Version 19.1.0 Build 670 09/22/2019 SJ Lite Edition
 
 
@@ -16,7 +16,7 @@ Quartus Prime Version 19.1.0 Build 670 09/22/2019 SJ Lite Edition
   8. General Register Statistics
   9. Multiplexer Restructuring Statistics (Restructuring Performed)
  10. Parameter Settings for User Entity Instance: Top-level Entity: |scalarRegisterFile
- 11. Parameter Settings for User Entity Instance: logic_decoder:comb_3
+ 11. Parameter Settings for User Entity Instance: logic_decoder:regWrDecoder
  12. Parameter Settings for User Entity Instance: register:REGISTER_BLOCK[0].r
  13. Parameter Settings for User Entity Instance: register:REGISTER_BLOCK[1].r
  14. Parameter Settings for User Entity Instance: register:REGISTER_BLOCK[2].r
@@ -33,7 +33,7 @@ Quartus Prime Version 19.1.0 Build 670 09/22/2019 SJ Lite Edition
  25. Port Connectivity Checks: "register:REGISTER_BLOCK[2].r"
  26. Port Connectivity Checks: "register:REGISTER_BLOCK[1].r"
  27. Port Connectivity Checks: "register:REGISTER_BLOCK[0].r"
- 28. Port Connectivity Checks: "logic_decoder:comb_3"
+ 28. Port Connectivity Checks: "logic_decoder:regWrDecoder"
  29. Post-Synthesis Netlist Statistics for Top Partition
  30. Elapsed Time Per Partition
  31. Analysis & Synthesis Messages
@@ -63,7 +63,7 @@ https://fpgasoftware.intel.com/eula.
 +-------------------------------------------------------------------------------+
 ; Analysis & Synthesis Summary                                                  ;
 +---------------------------------+---------------------------------------------+
-; Analysis & Synthesis Status     ; Successful - Fri May 12 13:42:36 2023       ;
+; Analysis & Synthesis Status     ; Successful - Fri May 12 16:32:01 2023       ;
 ; Quartus Prime Version           ; 19.1.0 Build 670 09/22/2019 SJ Lite Edition ;
 ; Revision Name                   ; vectorial_asip                              ;
 ; Top-level Entity Name           ; scalarRegisterFile                          ;
@@ -191,9 +191,9 @@ https://fpgasoftware.intel.com/eula.
 +--------------------------------------------+-----------------+------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------+---------+
 ; File Name with User-Entered Path           ; Used in Netlist ; File Type                    ; File Name with Absolute Path                                                                                                                               ; Library ;
 +--------------------------------------------+-----------------+------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------+---------+
+; common/logic_decoder.sv                    ; yes             ; User SystemVerilog HDL File  ; C:/Users/kazeledo/Documentos/Universidad/IS2022/arqui/proyectos/arqui/computer_architecture_vectorial_asip/ASIP/common/logic_decoder.sv                    ;         ;
 ; decoder/registerFile/scalarRegisterFile.sv ; yes             ; User SystemVerilog HDL File  ; C:/Users/kazeledo/Documentos/Universidad/IS2022/arqui/proyectos/arqui/computer_architecture_vectorial_asip/ASIP/decoder/registerFile/scalarRegisterFile.sv ;         ;
 ; common/register.sv                         ; yes             ; User SystemVerilog HDL File  ; C:/Users/kazeledo/Documentos/Universidad/IS2022/arqui/proyectos/arqui/computer_architecture_vectorial_asip/ASIP/common/register.sv                         ;         ;
-; common/decoder.sv                          ; yes             ; User SystemVerilog HDL File  ; C:/Users/kazeledo/Documentos/Universidad/IS2022/arqui/proyectos/arqui/computer_architecture_vectorial_asip/ASIP/common/decoder.sv                          ;         ;
 +--------------------------------------------+-----------------+------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------+---------+
 
 
@@ -278,14 +278,14 @@ Note: For table entries with two numbers listed, the numbers in parentheses indi
 Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
 
 
-+-------------------------------------------------------------------+
-; Parameter Settings for User Entity Instance: logic_decoder:comb_3 ;
-+----------------+-------+------------------------------------------+
-; Parameter Name ; Value ; Type                                     ;
-+----------------+-------+------------------------------------------+
-; in             ; 3     ; Signed Integer                           ;
-; out            ; 8     ; Signed Integer                           ;
-+----------------+-------+------------------------------------------+
++-------------------------------------------------------------------------+
+; Parameter Settings for User Entity Instance: logic_decoder:regWrDecoder ;
++----------------+-------+------------------------------------------------+
+; Parameter Name ; Value ; Type                                           ;
++----------------+-------+------------------------------------------------+
+; in             ; 3     ; Signed Integer                                 ;
+; out            ; 8     ; Signed Integer                                 ;
++----------------+-------+------------------------------------------------+
 Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
 
 
@@ -442,7 +442,7 @@ Note: In order to hide this table in the UI and the text report file, please set
 
 
 +------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-; Port Connectivity Checks: "logic_decoder:comb_3"                                                                                                                                                     ;
+; Port Connectivity Checks: "logic_decoder:regWrDecoder"                                                                                                                                               ;
 +----------+--------+----------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 ; Port     ; Type   ; Severity ; Details                                                                                                                                                               ;
 +----------+--------+----------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------+
@@ -487,10 +487,12 @@ Note: In order to hide this table in the UI and the text report file, please set
 Info: *******************************************************************
 Info: Running Quartus Prime Analysis & Synthesis
     Info: Version 19.1.0 Build 670 09/22/2019 SJ Lite Edition
-    Info: Processing started: Fri May 12 13:42:17 2023
+    Info: Processing started: Fri May 12 16:31:35 2023
 Info: Command: quartus_map --read_settings_files=on --write_settings_files=off vectorial_asip -c vectorial_asip
 Warning (18236): Number of processors has not been specified which may cause overloading on shared machines.  Set the global assignment NUM_PARALLEL_PROCESSORS in your QSF to an appropriate value for best performance.
 Info (20030): Parallel compilation is enabled and will use 4 of the 4 processors detected
+Info (12021): Found 1 design units, including 1 entities, in source file common/logic_decoder.sv
+    Info (12023): Found entity 1: logic_decoder File: C:/Users/kazeledo/Documentos/Universidad/IS2022/arqui/proyectos/arqui/computer_architecture_vectorial_asip/ASIP/common/logic_decoder.sv Line: 1
 Info (12021): Found 1 design units, including 1 entities, in source file decoder/registerfile/scalarregisterfile.sv
     Info (12023): Found entity 1: scalarRegisterFile File: C:/Users/kazeledo/Documentos/Universidad/IS2022/arqui/proyectos/arqui/computer_architecture_vectorial_asip/ASIP/decoder/registerFile/scalarRegisterFile.sv Line: 2
 Info (12021): Found 1 design units, including 1 entities, in source file common/memory/instruction_memory/instruction_memory.sv
@@ -501,14 +503,11 @@ Info (12021): Found 1 design units, including 1 entities, in source file common/
     Info (12023): Found entity 1: register File: C:/Users/kazeledo/Documentos/Universidad/IS2022/arqui/proyectos/arqui/computer_architecture_vectorial_asip/ASIP/common/register.sv Line: 1
 Info (12021): Found 1 design units, including 1 entities, in source file common/pipe.sv
     Info (12023): Found entity 1: pipe File: C:/Users/kazeledo/Documentos/Universidad/IS2022/arqui/proyectos/arqui/computer_architecture_vectorial_asip/ASIP/common/pipe.sv Line: 1
-Info (12021): Found 1 design units, including 1 entities, in source file common/decoder.sv
-    Info (12023): Found entity 1: logic_decoder File: C:/Users/kazeledo/Documentos/Universidad/IS2022/arqui/proyectos/arqui/computer_architecture_vectorial_asip/ASIP/common/decoder.sv Line: 1
-Critical Warning (10846): Verilog HDL Instantiation warning at scalarRegisterFile.sv(19): instance has no name File: C:/Users/kazeledo/Documentos/Universidad/IS2022/arqui/proyectos/arqui/computer_architecture_vectorial_asip/ASIP/decoder/registerFile/scalarRegisterFile.sv Line: 19
 Info (12127): Elaborating entity "scalarRegisterFile" for the top level hierarchy
-Warning (10027): Verilog HDL or VHDL warning at the scalarRegisterFile.sv(31): index expression is not wide enough to address all of the elements in the array File: C:/Users/kazeledo/Documentos/Universidad/IS2022/arqui/proyectos/arqui/computer_architecture_vectorial_asip/ASIP/decoder/registerFile/scalarRegisterFile.sv Line: 31
-Warning (10027): Verilog HDL or VHDL warning at the scalarRegisterFile.sv(32): index expression is not wide enough to address all of the elements in the array File: C:/Users/kazeledo/Documentos/Universidad/IS2022/arqui/proyectos/arqui/computer_architecture_vectorial_asip/ASIP/decoder/registerFile/scalarRegisterFile.sv Line: 32
-Info (12128): Elaborating entity "logic_decoder" for hierarchy "logic_decoder:comb_3" File: C:/Users/kazeledo/Documentos/Universidad/IS2022/arqui/proyectos/arqui/computer_architecture_vectorial_asip/ASIP/decoder/registerFile/scalarRegisterFile.sv Line: 19
-Info (12128): Elaborating entity "register" for hierarchy "register:REGISTER_BLOCK[0].r" File: C:/Users/kazeledo/Documentos/Universidad/IS2022/arqui/proyectos/arqui/computer_architecture_vectorial_asip/ASIP/decoder/registerFile/scalarRegisterFile.sv Line: 27
+Warning (10027): Verilog HDL or VHDL warning at the scalarRegisterFile.sv(28): index expression is not wide enough to address all of the elements in the array File: C:/Users/kazeledo/Documentos/Universidad/IS2022/arqui/proyectos/arqui/computer_architecture_vectorial_asip/ASIP/decoder/registerFile/scalarRegisterFile.sv Line: 28
+Warning (10027): Verilog HDL or VHDL warning at the scalarRegisterFile.sv(29): index expression is not wide enough to address all of the elements in the array File: C:/Users/kazeledo/Documentos/Universidad/IS2022/arqui/proyectos/arqui/computer_architecture_vectorial_asip/ASIP/decoder/registerFile/scalarRegisterFile.sv Line: 29
+Info (12128): Elaborating entity "logic_decoder" for hierarchy "logic_decoder:regWrDecoder" File: C:/Users/kazeledo/Documentos/Universidad/IS2022/arqui/proyectos/arqui/computer_architecture_vectorial_asip/ASIP/decoder/registerFile/scalarRegisterFile.sv Line: 16
+Info (12128): Elaborating entity "register" for hierarchy "register:REGISTER_BLOCK[0].r" File: C:/Users/kazeledo/Documentos/Universidad/IS2022/arqui/proyectos/arqui/computer_architecture_vectorial_asip/ASIP/decoder/registerFile/scalarRegisterFile.sv Line: 24
 Warning (12241): 9 hierarchies have connectivity warnings - see the Connectivity Checks report folder
 Warning (13024): Output pins are stuck at VCC or GND
     Warning (13410): Pin "reg1Out[8]" is stuck at GND File: C:/Users/kazeledo/Documentos/Universidad/IS2022/arqui/proyectos/arqui/computer_architecture_vectorial_asip/ASIP/decoder/registerFile/scalarRegisterFile.sv Line: 8
@@ -522,10 +521,10 @@ Info (21057): Implemented 159 device resources after synthesis - the final resou
     Info (21058): Implemented 21 input pins
     Info (21059): Implemented 18 output pins
     Info (21061): Implemented 120 logic cells
-Info: Quartus Prime Analysis & Synthesis was successful. 0 errors, 10 warnings
-    Info: Peak virtual memory: 4807 megabytes
-    Info: Processing ended: Fri May 12 13:42:36 2023
-    Info: Elapsed time: 00:00:19
-    Info: Total CPU time (on all processors): 00:00:45
+Info: Quartus Prime Analysis & Synthesis was successful. 0 errors, 9 warnings
+    Info: Peak virtual memory: 4810 megabytes
+    Info: Processing ended: Fri May 12 16:32:01 2023
+    Info: Elapsed time: 00:00:26
+    Info: Total CPU time (on all processors): 00:00:52
 
 
