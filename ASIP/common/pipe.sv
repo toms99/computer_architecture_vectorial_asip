@@ -1,4 +1,4 @@
-module pipe #( parameter WIDTH = 8 )
+module pipe #(parameter WIDTH = 8)
 			  ( input logic 	         clk, reset,
 			    input logic  [WIDTH-1:0] in,
 				output logic [WIDTH-1:0] out );

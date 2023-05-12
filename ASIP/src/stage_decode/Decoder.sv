@@ -8,16 +8,17 @@ module Decoder #(parameter N=16)
 						
 	logic [3:0] opcode;
 	logic [3:0] register_1;
-	
+	logic [7:0] imm;
 	
 	
 	// Decodificacion por condiciones
 	always_comb begin
 		opcode = instruction[15:12];
 		register_1 = instruction[11:8];
+		imm = instruction[7:0];
 		
 		if (opcode[0] || opcode[1] || opcode[2] || opcode[3]) begin //Cualquier instruccion excepto LOSC
-			WriteRegFrom = {1'b0, ~opcode[3]}; 
+			WriteRegFrom = {1'b0, ~opcode[3]}; // 0 -> Escribir desde memoria y 1 -> Desde ALU
 		end else begin
 			WriteRegFrom = 2'b10; // LOSC - Load scalar - Escribir a registro desde inmediato
 		end	
@@ -27,9 +28,7 @@ module Decoder #(parameter N=16)
 	//Decodificacion directa
 	assign MemoryWrite = opcode == 4'b1100; // Escribir a memoria si opcode = SUPIX
 	assign RegWriteEn = ~opcode[0] || opcode[1] & opcode[2];
-	assign RegToWrite = instruction[11:8];
-	assign Immediate =  instruction[7:0];
+	assign RegToWrite = register_1;
+	assign Immediate = imm;
 	
-
-
 endmodule

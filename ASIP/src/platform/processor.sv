@@ -1,17 +1,20 @@
-module processor(input clk, rst, 
-					  input logic [31:0] instruction, ReadData,
-					  output logic [31:0] PC,
-					  output logic MemoryWrite,
-					  output logic [31:0] dataAddress, WriteData);
-					  
+module processor();
+
+	logic clk, rst, 
+	logic [15:0] instruction_f, instruction_d, ReadData,
+	logic [15:0] PC,
+	logic MemoryWrite,
+	logic [15:0] dataAddress, WriteData
 	logic [1:0] WriteRegFrom;
 	logic [3:0] RegToWrite;
-	logic [7:0] Immediate;
-	logic RegWriteEn;
+	logic [7:0] Immediate, [7:0] newPc;
+	logic RegWriteEn, pcWrEn;
 	
-	Decoder decoder(instruction, MemoryWrite, WriteRegFrom, RegToWrite, Immediate, RegWriteEn);
+	fetchStage fetch(clk, rst, pcWrEn, newPc, instruction_f);
 	
-	assign PC = 0;	
+	pipe #(16) p_fetch_deco(clk, rst, instruction_f, instruction_d);
+	
+	decoderStage decoder(clk,rst,instruction_d, MemoryWrite, WriteRegFrom, RegToWrite, Immediate, RegWriteEn);
 						
 					  
 endmodule
