@@ -6,7 +6,7 @@ module fetchStage(
 
     logic [7:0] pcM4, chosePc, pc;
 
-    register pcReg(								   //PC register
+    register pcReg(		//PC register
         .clk(clk),
         .reset(reset),
         .data_in(chosePc),
