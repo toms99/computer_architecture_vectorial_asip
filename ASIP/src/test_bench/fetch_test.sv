@@ -18,14 +18,19 @@ module fetch_test();
         pcWrEn = 0;
         #10 
             reset = 0;
-            assert (instruction == 16'h0004) else $error("Instruction is not 16'h1234");
+            assert (instruction == 16'h1234) else $error("Instruction is not 16'h1234");
         #10
-            assert (instruction == 16'h1008) else $error("Instruction is not 16'h0004");
+            assert (instruction == 16'h1008) else $error("Instruction is not 16'h1008");
         #5
             pcWrEn = 1;
-            newPc = 8'h04;
+            newPc = 8'h10;
         #5
-            assert (instruction == 16'h1008) else $error("Instruction override wrong");
+            assert (instruction == 16'h7007) else $error("Instruction override wrong");
+				
+			#5
+				pcWrEn = 0;
+		  #50;
+				
     end
 
 endmodule
