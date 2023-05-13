@@ -352,3 +352,19 @@ MigrationBackup/
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
 vectorial_asip_nativelink_simulation.rpt
+
+vectorial_asip.asm.rpt
+vectorial_asip.eda.rpt
+vectorial_asip.fit.rpt
+vectorial_asip.fit.smsg
+vectorial_asip.fit.summary
+vectorial_asip.jdi
+vectorial_asip.pin
+vectorial_asip.sld
+vectorial_asip.sof
+vectorial_asip.sta.rpt
+vectorial_asip.sta.summary
+vectorial_asip.done
+vectorial_asip.flow.rpt
+vectorial_asip.map.rpt
+vectorial_asip.map.summary
