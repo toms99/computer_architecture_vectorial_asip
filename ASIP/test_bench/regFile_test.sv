@@ -65,13 +65,37 @@ module regFile_test #(
         #10
         assert(operand1 == 0) else $error("Test 1 failed: vectorialRegister 0 = %d", operand1);
 
-        // 2. Write to vectorial register 7, then read that register in port 1
-        // -> Vectorial register 7 should have the information
+        // 2. Write to vectorial register 3, then read that register in port 1
+        // -> Vectorial register 3 should have the information
         // -> Port 2 should output 0
-        // -> Scalar register 7 should not have changed
+        // -> Scalar register 3 (reg 7) should not have changed
+        #10
+        regWrEnVec = 1;
+        regWrEnSc = 0;
+        regToWrite = 3;
+        dataIn = 32'hDEADBEEF;
+        //Preparing to read
+        rSel1 = 3;
+        rSel2 = 1;
+        #10
+        assert (operand1 == 32'hDEADBEEF) else $error("Test 2 failed: operand1 = %d", operand1);
+        assert (operand2 == 0) else $error("Test 2 failed: operand2 = %d", operand2);
+        // Now we will read scalar reg 3 (reg 7)
+        #10
+        rSel1 = 7;
+        #10
+        assert(operand1 == 0) else $error("Test 2 failed: scalarRegister 3 = %d", operand1);
         // 3. Read from scalar register 0 (reg 8) on port 1, and from vectorial register 7 on port 2
         // -> Port 1 should output the information from scalar register 0 (vectorized)
-        // -> Port 2 should output the information from vectorial register 7
+        // -> Port 2 should output the information from vectorial register 3
+        #10
+        regWrEnSc = 0;
+        regWrEnVec = 0;
+        rSel1 = 4;
+        rSel2 = 3;
+        #10
+        assert (operand1 == 32'h04040404) else $error("Test 3 failed: operand1 = %d", operand1);
+        assert (operand2 == 32'hDEADBEEF) else $error("Test 3 failed: operand2 = %d", operand2);
         #20
         $finish;
 
