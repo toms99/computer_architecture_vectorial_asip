@@ -4,12 +4,11 @@ module scalarRegisterFile #(parameter registerSize=8, parameter registerQuantity
     input regWrEn,
     input [2:0] rSel1, rSel2,
     input [2:0] regToWrite,
-    input [registerSize:0] dataIn,
-    output [registerSize:0] reg1Out, reg2Out
+    input [registerSize-1:0] dataIn,
+    output [registerSize-1:0] reg1Out, reg2Out
 );
-
-    logic [registerQuantity:0] reg_N_WrEn;
-    logic [registerQuantity:0] [registerSize-1:0] reg_N_Out;
+    logic [registerQuantity-1:0] reg_N_WrEn;
+    logic [registerQuantity-1:0] [registerSize-1:0] reg_N_Out;
 
     logic_decoder #(.in(3), .out(registerQuantity)) regWrDecoder(
         .sel(regToWrite), .data_out(reg_N_WrEn)
