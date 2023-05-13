@@ -1,11 +1,12 @@
 module vecRegisterFile #(
     parameter registerSize = 8,
-    parameter registerQuantity = 8,
+    parameter registerQuantity = 4,
+    parameter selectionBits = 2,
     parameter vectorSize = 4
 ) (
     input clk, reset,
     input regWrEn,
-    input [2:0] rSel1, rSel2, regToWrite,
+    input [selectionBits-1:0] rSel1, rSel2, regToWrite,
     input [vectorSize-1:0] [registerSize-1:0] regWriteData,
     output [vectorSize-1:0] [registerSize-1:0] reg1Out,
     output [vectorSize-1:0] [registerSize-1:0] reg2Out
@@ -13,7 +14,7 @@ module vecRegisterFile #(
     logic [registerQuantity-1:0] reg_N_WrEn;
     logic [registerQuantity-1:0] [vectorSize-1:0] [registerSize-1:0] reg_N_Out;
 
-    logic_decoder #(.in(3), .out(registerQuantity)) regWrDecoder(
+    logic_decoder #(.in(selectionBits), .out(registerQuantity)) regWrDecoder(
         .sel(regToWrite), .data_out(reg_N_WrEn)
     );
 

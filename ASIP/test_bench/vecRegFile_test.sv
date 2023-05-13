@@ -1,13 +1,21 @@
 `timescale 1ps/1ps
-module vecRegFile_test();
+module vecRegFile_test#(
+    parameter registerSize = 8,
+    parameter registerQuantity = 4,
+    parameter selectionBits = 2,
+    parameter vectorSize = 4
+)();
     logic clk, reset, regWrEn;
-    logic [2:0] rSel1, rSel2, regToWrite;
+    logic [selectionBits-1:0] rSel1, rSel2, regToWrite;
 
-    logic [3:0] [7:0] dataIn;
-    logic [3:0] [7:0] reg1Out;
-    logic [3:0] [7:0] reg2Out;
+    logic [vectorSize-1:0] [registerSize-1:0] dataIn, reg1Out, reg2Out;
 
-    vecRegisterFile #(8, 8, 4) vecRegs(
+    vecRegisterFile #(
+        .registerSize(registerSize),
+        .registerQuantity(registerQuantity),
+        .selectionBits(selectionBits),
+        .vectorSize(vectorSize)
+    ) vecRegs(
         .clk(clk), .reset(reset), .regWrEn(regWrEn),
         .rSel1(rSel1), .rSel2(rSel2), .regToWrite(regToWrite),
         .regWriteData(dataIn), .reg1Out(reg1Out), .reg2Out(reg2Out)
@@ -41,12 +49,12 @@ module vecRegFile_test();
         assert (reg2Out[2] == 8'h0) else $error("Register port 2, element 1 read incorrect");
         assert (reg2Out[1] == 8'h0) else $error("Register port 2, element 2 read incorrect");
         assert (reg2Out[0] == 8'h0) else $error("Register port 2, element 3 read incorrect");
-        #10 // Write to register 7
+        #10 // Write to register 3
         regWrEn = 1;
-        regToWrite = 7;
+        regToWrite = 3;
         dataIn = 32'h1A2B3C4D;
         // Should be able to read what we wrote
-        rSel1 = 7;
+        rSel1 = 3;
         #10
         assert (reg1Out[3] == 8'h1A) else $error("Register 7, element 0 read incorrect");
         assert (reg1Out[2] == 8'h2B) else $error("Register 7, element 1 read incorrect");
@@ -60,7 +68,7 @@ module vecRegFile_test();
 
         #10 // Reading both ports
         rSel1 = 1;
-        rSel2 = 7;
+        rSel2 = 3;
         #10
 
         assert (reg1Out[3] == 8'hDE) else $error("Register 1, element 0 read incorrect");

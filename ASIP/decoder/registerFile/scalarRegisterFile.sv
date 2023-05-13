@@ -2,7 +2,7 @@
 module scalarRegisterFile #(
     parameter registerSize=8, 
     parameter registerQuantity=4,
-    parameter selectionBits=3
+    parameter selectionBits=2
 ) (
     input clk, reset,
     input regWrEn,
