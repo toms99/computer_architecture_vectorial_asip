@@ -4,11 +4,13 @@ module Decoder #(parameter N=16)
 						output logic [1:0] WriteRegFrom, //Bandera que indica de donde viene lo que vamos a escribir en el registro (memoria, imm, ALU)
 						output logic [3:0] RegToWrite,
 						output logic [7:0] Immediate,
-						output logic RegWriteEn);
+						output logic RegWriteEnSc,
+						output logic RegWriteEnVec);
 						
 	logic [3:0] opcode;
 	logic [3:0] register_1;
 	logic [7:0] imm;
+	logic RegWriteEn;
 	
 	
 	// Decodificacion por condiciones
@@ -30,5 +32,7 @@ module Decoder #(parameter N=16)
 	assign RegWriteEn = ~opcode[0] || opcode[1] & opcode[2];
 	assign RegToWrite = register_1;
 	assign Immediate = imm;
+	assign RegWriteEnSc = RegWriteEn & register_1[2];
+	assign RegWriteEnVec = RegWriteEn & ~register_1[2];
 	
 endmodule
