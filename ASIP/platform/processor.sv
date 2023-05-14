@@ -16,6 +16,19 @@ module processor #(
 	logic [registerSize-1:0] Immediate, newPc;
 	logic regWriteEnSc, regWriteEnVec, pcWrEn;
 	
+	
+	//Matriz de ceros
+	// Inicializar la matriz a cero
+	logic [vectorSize-1:0] [registerSize-1:0] matrix_zero;
+   initial begin
+	  for (int i = 0; i < vectorSize; i++) begin
+		 for (int j = 0; j < registerSize; j++) begin
+		   matrix_zero[i][j] = 0;
+		 end
+	  end
+   end
+	
+	
 	fetchStage fetch(clk, rst, pcWrEn, newPc, instruction_f);
 	
 	pipe #(16) p_fetch_deco(clk, rst, instruction_f, instruction_d);
@@ -57,7 +70,7 @@ module processor #(
 	 //Pipe Ex-Mem
 	 logic [registerSize-1+10:0] condensed_mem_in, condensed_mem_out;
 	 assign condensed_mem_in =  {MemoryWrite_Ex, Immediate_Ex, WriteRegFrom_Ex,  RegToWrite_Ex, PCWrEn, regWriteEnSc_Ex, regWriteEnVec_Ex};
-	 pipe_vect #(registerSize+10,registerSize, vectorSize) p_ex_mem(clk, rst, condensed_mem_in, operand_ex, 0, condensed_mem_out, operand_mem, 0);
+	 pipe_vect #(registerSize+10,registerSize, vectorSize) p_ex_mem(clk, rst, condensed_mem_in, operand_ex, matrix_zero, condensed_mem_out, operand_mem, matrix_zero);
 						
 	
 	// Meter aqui Memory stage

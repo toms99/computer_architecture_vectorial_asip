@@ -3,7 +3,7 @@ module pipe_vect #(parameter WIDTH = 8,
 				  parameter vectorSize = 4)
 			  ( input logic 	         clk, reset,
 			    input logic  [WIDTH-1:0] in,
-				 input logic [vectorSize-1:0] [registerSize-1:0] vect1, vect2,
+				 input logic [vectorSize-1:0] [registerSize-1:0] vect1, vect2 ,
 				output logic [WIDTH-1:0] out,
 				output logic [vectorSize-1:0] [registerSize-1:0] vect1_out, vect2_out);
 
