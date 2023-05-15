@@ -1,1 +1,1 @@
-Info (10281): Verilog HDL Declaration information at processor.sv(17): object "pcWrEn" differs only in case from object "PCWrEn" in the same scope File: C:/Users/anom/Documents/GitHub/computer_architecture_vectorial_asip/ASIP/platform/processor.sv Line: 17
+Info (10281): Verilog HDL Declaration information at processor.sv(17): object "pcWrEn" differs only in case from object "PCWrEn" in the same scope File: C:/Users/kazeledo/Documentos/Universidad/IS2022/arqui/proyectos/arqui/computer_architecture_vectorial_asip/ASIP/platform/processor.sv Line: 17
