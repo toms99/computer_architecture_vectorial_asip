@@ -29,7 +29,7 @@ module processor #(
    end
 	
 	
-	fetchStage fetch(clk, rst, pcWrEn, newPc, instruction_f);
+	fetchStage fetch(clk, rst, PCWrEn_mem, newPc, instruction_f);
 	
 	pipe #(16) p_fetch_deco(clk, rst, instruction_f, instruction_d);
 	
@@ -63,15 +63,34 @@ module processor #(
 	
 	
 	//Stage Execute
-	logic [vectorSize-1:0] [registerSize-1:0] operand_ex, operand_mem;
+	logic [vectorSize-1:0] [registerSize-1:0] result_ex, alu_result_mem;
 	stage_execute #(.registerSize(registerSize),.vectorSize(vectorSize)) execute_stage
-		(clk, rst, ExecuteOp, PCWrEn, operand1_ex, operand2_ex, operand_ex);
+		(clk, rst, ExecuteOp, PCWrEn, operand1_ex, operand2_ex, result_ex);
 	
 	 //Pipe Ex-Mem
 	 logic [registerSize-1+10:0] condensed_mem_in, condensed_mem_out;
-	 assign condensed_mem_in =  {MemoryWrite_Ex, Immediate_Ex, WriteRegFrom_Ex,  RegToWrite_Ex, PCWrEn, regWriteEnSc_Ex, regWriteEnVec_Ex};
-	 pipe_vect #(registerSize+10,registerSize, vectorSize) p_ex_mem(clk, rst, condensed_mem_in, operand_ex, matrix_zero, condensed_mem_out, operand_mem, matrix_zero);
+	 assign condensed_mem_in =  {MemoryWrite_Ex, Immediate_Ex, WriteRegFrom_Ex,
+                                 RegToWrite_Ex, PCWrEn, regWriteEnSc_Ex, 
+                                 regWriteEnVec_Ex};
+	 pipe_vect #(registerSize+10,registerSize, vectorSize) p_ex_mem(clk, rst, condensed_mem_in, result_ex, matrix_zero, condensed_mem_out, alu_result_mem, matrix_zero);
 						
 	
-	// Meter aqui Memory stage
+	// Memory stage
+	// Variables que entran al Memory Stage
+	logic MemoryWrite_Mem, regWriteEnSc_Mem, regWriteEnVec_Mem;
+	logic [1:0] WriteRegFrom_Mem; 
+	logic [3:0] RegToWrite_Mem;
+	logic [registerSize-1:0] Immediate_Mem;
+	logic PCWrEn_Mem;
+    assign {MemoryWrite_Mem, regWriteEnSc_Mem, regWriteEnVec_Mem, 
+            WriteRegFrom_Mem, RegToWrite_Mem, Immediate_Mem, 
+            PCWrEn_Mem} = condensed_mem_out;
+    stage_writeback #(
+        .vecSize(vectorSize), .registerSize(registerSize)
+    ) writeback_stage (
+        .clk(clk), .reset(rst), .writeEnable(MemoryWrite_Mem),
+        .writeRegFrom(WriteRegFrom_Mem), .address(Immediate_Mem),
+        .imm(Immediate_Mem), .writeData(alu_result_mem),
+        .aluResult(alu_result_mem), .writeBackData(writeBackData),
+    );
 endmodule
