@@ -103,6 +103,26 @@ module regFile_test #(
         rSel1 = 12;
         #10
         assert (operand1 == 0) else $error("Test 4 failed: operand1 = %d", operand1);
+        #10
+        // 5. Write to special register 13, then read
+        regWrEnSc = 1;
+        regToWrite = 13;
+        dataIn = 7;
+        #10
+        regWrEnSc = 0;
+        rSel1 = 13;
+        #10
+        assert (operand1 == 32'h07070707) else $error("Test 5 failed: operand1 = %d", operand1);
+        #10
+        // 6. Write to special register 14, then read
+        regWrEnSc = 1;
+        regToWrite = 14;
+        dataIn = 9;
+        #10
+        regWrEnSc = 0;
+        rSel1 = 14;
+        #10
+        assert (operand1 == 32'h09090909) else $error("Test 5 failed: operand1 = %d", operand1);
         #20
         $finish;
 
