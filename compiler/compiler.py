@@ -68,7 +68,6 @@ def get_file_lines(path):
 # Elimina los comentarios de una unica linea
 def remove_comments_single_line(string):
     result = string.split("$")
-    print(result)
     return result[0]
 
 
@@ -132,6 +131,27 @@ def reformat_input_file(path_source_file):
     return instruction_matrix
 
 
+def compile_instructions(instruction_matrix):
+    compiled_instructios = []
+    compiled_instructions = 0
+    for instruction_list in instruction_matrix:
+        instruction_length = len(instruction_list)
+        # Comprueba si la linea es vacia.
+        # En ese caso se ignora la linea
+        if instruction_length == 0:
+            print("empty")
+            pass
+        # Comprueba la definición de branches.
+        elif instruction_length == 1 and ":" in instruction_list[0]:
+            print("branch")
+        # Comprueba instrucciones de un operando
+        elif instruction_length == 2:
+            print("instrucciones de un operando")
+        # Comprueba instrucciones de dos operandos
+        elif instruction_length == 3:
+            print("instrucciones de dos operandos")
+
+
 # main --------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -151,7 +171,8 @@ def main():
 
     instruction_matrix = reformat_input_file(path_source_file)
 
-    print(instruction_matrix)
+    # Compila las instrucciones
+    compile_instructions(instruction_matrix)
 
 
 # Verifica si el archivo se está ejecutando como el programa principal

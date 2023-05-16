@@ -1,3 +1,6 @@
-Hola mundo
-Adios mundo feo    $ comenterio
-prueba       asdasd         $ asdakdgnp
+
+branch:
+XOR R0 R4 $ dos operandos
+JE 0x0110 $ un operandos
+
+
