@@ -2,15 +2,15 @@
 module regFile_test #(
     parameter registerSize = 8,
     parameter registerQuantity = 4,
-    parameter selectionBits = 2,
+    parameter selectionBits = 4,
     parameter vectorSize = 4
 )();
 
     logic clk, reset;
     logic regWrEnSc, regWrEnVec;
     // MSB used for selector
-    logic [selectionBits:0] rSel1, rSel2;
-    logic [selectionBits:0] regToWrite;
+    logic [3:0] rSel1, rSel2;
+    logic [3:0] regToWrite;
     // Outputs
     logic [vectorSize-1:0] [registerSize-1:0] dataIn;
     logic [vectorSize-1:0] [registerSize-1:0] operand1, operand2;
@@ -52,9 +52,11 @@ module regFile_test #(
         #10
         reset = 0;
         regWrEnSc = 1;
-        regToWrite = 0;
+        regToWrite = 4;
         dataIn = 4;
+        #10
         // Preparing to read
+        regWrEnSc = 0;
         rSel1 = 4;
         rSel2 = 1;
         #10
@@ -96,6 +98,11 @@ module regFile_test #(
         #10
         assert (operand1 == 32'h04040404) else $error("Test 3 failed: operand1 = %d", operand1);
         assert (operand2 == 32'hDEADBEEF) else $error("Test 3 failed: operand2 = %d", operand2);
+        #10
+        // 4. Read from special register 12, should be 0
+        rSel1 = 12;
+        #10
+        assert (operand1 == 0) else $error("Test 4 failed: operand1 = %d", operand1);
         #20
         $finish;
 
