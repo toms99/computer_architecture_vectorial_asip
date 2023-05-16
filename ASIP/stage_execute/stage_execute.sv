@@ -3,13 +3,15 @@ module stage_execute #(
 	parameter vectorSize = 4
 )
 (
-	input logic clk, reset, PCWrEn, overwriteFlags,
+	input logic clk, reset, overwriteFlags,
+    input logic [2:0] pcWrEn,
     input logic [2:0] ExecuteOp,
 	input logic [vectorSize-1:0] [registerSize-1:0] vect1, vect2,
 	output logic [vectorSize-1:0] [registerSize-1:0] vect_out,
-    output logic [1:0] NZ_flags
+    output logic pcWrEn_out
 );
 
+    logic [1:0] NZ_flags;
     logic [vectorSize-1:0] negativeFlags, zeroFlags;
 
     generate
@@ -34,5 +36,10 @@ module stage_execute #(
         .clk(clk & overwriteFlags), .reset(reset),
         .data_in(&zeroFlags), .data_out(NZ_flags[1])
     );
+
+    assign pcWrEn_out = pcWrEn == 3'b100 ? 1 :
+                        pcWrEn == 3'b010 ? NZ_flags[1] :
+                        pcWrEn == 3'b001 ? NZ_flags[0] :
+                        0;
 
 endmodule

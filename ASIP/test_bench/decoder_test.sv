@@ -173,8 +173,6 @@ module decoder_test();
         assert (AluOpCode == 7) else $error("Test 9: AluOpCode should be 7");
         assert (WriteRegFrom == 1) else $error("Test 9: WriteRegFrom should be 1");
         assert (OverWriteNz == 1) else $error("Test 9: OverWriteNz should be 1");
-        // TODO: Hay que poder acceder a este registro en el regFile, ahorita no se puede
-        // TODO: Ya no es el 14, arreglar
         assert (RegToWrite == 14) else $error("Test 9: RegToWrite should be 14");
         assert (RegWriteEnSc == 1) else $error("Test 9: RegWriteEnSc should be 1");
         assert (RegWriteEnVec == 0) else $error("Test 9: RegWriteEnVec should be 0");

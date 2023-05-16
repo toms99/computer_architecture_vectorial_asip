@@ -3,7 +3,8 @@ module stage_execute_test #(
     parameter registerSize = 8
 )();
 
-	logic clk, reset, PCWrEn, overwriteFlags;
+	logic clk, reset, overwriteFlags, pcWrEn_out;
+    logic [2:0] PCWrEn;
     logic [2:0] ExecuteOp;
 	logic [vectorSize-1:0] [registerSize-1:0] vect1, vect2;
 	logic [vectorSize-1:0] [registerSize-1:0] vect_out;
@@ -16,12 +17,12 @@ module stage_execute_test #(
         .clk(clk),
         .reset(reset),
         .ExecuteOp(ExecuteOp),
-        .PCWrEn(PCWrEn),
+        .pcWrEn(PCWrEn),
         .overwriteFlags(overwriteFlags),
         .vect1(vect1),
         .vect2(vect2),
         .vect_out(vect_out),
-        .NZ_flags(NZ_flags)
+        .pcWrEn_out(pcWrEn_out)
     );
 
     always #5 clk = ~clk;
@@ -64,7 +65,6 @@ module stage_execute_test #(
         assert(vect_out[2] == 8'b11111111) else $error("Operation 1: Incorrect result for vect_out[2]");
         assert(vect_out[3] == 8'b11111111) else $error("Operation 1: Incorrect result for vect_out[3]");
         
-        assert(NZ_flags == 2'b01) else $error("Operation 1: Incorrect NZ_flags");
         #10;
 
         // Operation 2: Addition
@@ -89,7 +89,6 @@ module stage_execute_test #(
         assert(vect_out[2] == 8'b11111111) else $error("Operation 2: Incorrect result for vect_out[2]");
         assert(vect_out[3] == 8'b11111111) else $error("Operation 2: Incorrect result for vect_out[3]");
         
-        assert(NZ_flags == 2'b01) else $error("Operation 2: Incorrect NZ_flags");
         #10;
         
         // Operation 3: Subtraction
@@ -114,7 +113,6 @@ module stage_execute_test #(
         assert(vect_out[2] == 8'b01010101) else $error("Operation 3: Incorrect result for vect_out[2]");
         assert(vect_out[3] == 8'b10101011) else $error("Operation 3: Incorrect result for vect_out[3]");
         
-        assert(NZ_flags == 2'b01) else $error("Operation 3: Incorrect NZ_flags");
         #10;
         
         // Operation 4: Multiplication
@@ -139,12 +137,10 @@ module stage_execute_test #(
         assert(vect_out[2] == 8'b00110010) else $error("Operation 4: Incorrect result for vect_out[2]");
         assert(vect_out[3] == 8'b00110010) else $error("Operation 4: Incorrect result for vect_out[3]");
         
-        assert(NZ_flags == 2'b00) else $error("Operation 4: Incorrect NZ_flags");
         #10;
         
         // Operation 5: Right Shift
         ExecuteOp = 3'b101;
-        PCWrEn = 1;
 
         vect1[0] = 8'b10101010;
         vect1[1] = 8'b01010101;
@@ -165,12 +161,10 @@ module stage_execute_test #(
         assert(vect_out[2] == 8'b00011110) else $error("Operation 5: Incorrect result for vect_out[2]");
         assert(vect_out[3] == 8'b00000000) else $error("Operation 5: Incorrect result for vect_out[3]");
 
-        assert(NZ_flags == 2'b01) else $error("Operation 5: Incorrect NZ_flags");
         #10;
 
         // Operation 6: Left Shift
         ExecuteOp = 3'b110;
-        PCWrEn = 1;
 
         vect1[0] = 8'b10101010;
         vect1[1] = 8'b01010101;
@@ -191,9 +185,7 @@ module stage_execute_test #(
         assert(vect_out[2] == 8'b10000000) else $error("Operation 6: Incorrect result for vect_out[2]");
         assert(vect_out[3] == 8'b11110000) else $error("Operation 6: Incorrect result for vect_out[3]");
 
-        assert(NZ_flags == 2'b01) else $error("Operation 6: Incorrect NZ_flags");
         #10;
-
 
         // Test 7: Zero flag
         ExecuteOp = 3'b011;
@@ -214,8 +206,62 @@ module stage_execute_test #(
         assert(vect_out[2] == 0) else $error("Test 7: Incorrect result for vect_out[2]");
         assert(vect_out[3] == 0) else $error("Test 7: Incorrect result for vect_out[3]");
 
-        assert(NZ_flags == 2'b10) else $error("Test 7: Incorrect NZ_flags");
         #10;
+
+        // Test 8 : Inconditional jump
+        PCWrEn = 3'b100;
+        #10;
+        assert(pcWrEn_out == 1) else $error("Test 8: Incorrect pcWrEn_out");
+        #10;
+        
+        // Test 9: Jump on Zero
+        PCWrEn = 3'b010;
+        ExecuteOp = 3'b011;
+        
+        vect1[0] = 8'b00110011;
+        vect1[1] = 8'b11001100;
+        vect1[2] = 8'b10101010;
+        vect1[3] = 8'b01010101;
+        
+        vect2[0] = 8'b00110011;
+        vect2[1] = 8'b11001100;
+        vect2[2] = 8'b10101010;
+        vect2[3] = 8'b01010101;
+        #10;
+        // Check results
+        assert(vect_out[0] == 0) else $error("Test 7: Incorrect result for vect_out[0]");
+        assert(vect_out[1] == 0) else $error("Test 7: Incorrect result for vect_out[1]");
+        assert(vect_out[2] == 0) else $error("Test 7: Incorrect result for vect_out[2]");
+        assert(vect_out[3] == 0) else $error("Test 7: Incorrect result for vect_out[3]");
+
+        assert(pcWrEn_out == 1) else $error("Test 9: Incorrect pcWrEn_out");
+
+        // Test 10: Jump on negative
+        PCWrEn = 3'b001;
+        ExecuteOp = 3'b011;
+        
+        vect1[0] = 8'b00110011;
+        vect1[1] = 8'b11001100;
+        vect1[2] = 8'b10101010;
+        vect1[3] = 8'b01010101;
+        
+        vect2[0] = 8'b00001111;
+        vect2[1] = 8'b11110000;
+        vect2[2] = 8'b01010101;
+        vect2[3] = 8'b10101010;
+        
+        // Wait for execution
+        #10;
+        
+        // Check results
+        assert(vect_out[0] == 8'b00100100) else $error("Operation 3: Incorrect result for vect_out[0]");
+        assert(vect_out[1] == 8'b11011100) else $error("Operation 3: Incorrect result for vect_out[1]");
+        assert(vect_out[2] == 8'b01010101) else $error("Operation 3: Incorrect result for vect_out[2]");
+        assert(vect_out[3] == 8'b10101011) else $error("Operation 3: Incorrect result for vect_out[3]");
+
+        assert(pcWrEn_out == 1) else $error("Test 10: Incorrect pcWrEn_out");
+
+        #20;
 
         // Finish simulation
         $display("All test cases finished");
