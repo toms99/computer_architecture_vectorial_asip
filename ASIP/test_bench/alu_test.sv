@@ -69,6 +69,12 @@ module alu_test #(
         operand2 = 3;
         #10
         assert (neg_flag == 1) else $error("Test 8, neg flag failed");
+        #10
+        // 9: inc 4 = 5
+        operation_select = 3'b111;
+        operand1 = 4;
+        #10
+        assert (result == 5) else $error("Test 9, inc failed"); 
         #20
         $finish;
     end
