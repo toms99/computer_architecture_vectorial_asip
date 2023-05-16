@@ -64,15 +64,21 @@ module processor #(
 	
 	//Stage Execute
 	logic [vectorSize-1:0] [registerSize-1:0] result_ex, alu_result_mem;
+    logic [1:0] NZ_flags;
 	stage_execute #(.registerSize(registerSize),.vectorSize(vectorSize)) execute_stage
-		(clk, rst, ExecuteOp, PCWrEn, operand1_ex, operand2_ex, result_ex);
+	(   
+        .clk(clk), .reset(rst), .ExecuteOp(ExecuteOp), 
+        .PCWrEn(PCWrEn), .vect1(operand1_ex), 
+        .vect2(operand2_ex), .vect_out(result_ex),
+        .NZ_flags(NZ_flags)
+    );
 	
 	 //Pipe Ex-Mem
 	 logic [registerSize-1+10:0] condensed_mem_in, condensed_mem_out;
 	 assign condensed_mem_in =  {MemoryWrite_Ex, Immediate_Ex, WriteRegFrom_Ex,
                                  RegToWrite_Ex, PCWrEn, regWriteEnSc_Ex, 
                                  regWriteEnVec_Ex};
-	 pipe_vect #(registerSize+10,registerSize, vectorSize) p_ex_mem(clk, rst, condensed_mem_in, result_ex, matrix_zero, condensed_mem_out, alu_result_mem, matrix_zero);
+	 pipe_vect #(registerSize+10, registerSize, vectorSize) p_ex_mem(clk, rst, condensed_mem_in, result_ex, matrix_zero, condensed_mem_out, alu_result_mem, matrix_zero);
 						
 	
 	// Memory stage
