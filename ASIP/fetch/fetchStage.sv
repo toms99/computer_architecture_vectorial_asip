@@ -1,7 +1,7 @@
 module fetchStage(
-    input clk, input reset, input pcWrEn,
-    input [7:0] newPc,
-    output [15:0] instruction
+    input logic clk, input logic reset, input logic pcWrEn,
+    input logic [7:0] newPc,
+    output logic [15:0] instruction
 );
 
     logic [7:0] pcM4, chosePc, pc;
