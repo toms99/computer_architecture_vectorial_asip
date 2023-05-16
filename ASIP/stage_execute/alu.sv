@@ -8,7 +8,7 @@ module alu #(
 );
 
     logic [dataSize-1:0] sum_res, sub_res, mult_res, rshift_res, lshift_res, 
-        xor_res;
+        xor_res, inc_res;
     
     assign sum_res = operand1 + operand2;
     assign sub_res = operand1 - operand2;
@@ -16,6 +16,7 @@ module alu #(
     assign rshift_res = operand1 >> operand2;
     assign lshift_res = operand1 << operand2;
     assign xor_res = operand1 ^ operand2;
+    assign inc_res = operand1 + 1;
 
     assign result = operation_select == 3'b001 ? xor_res :
                     operation_select == 3'b010 ? sum_res :
@@ -23,6 +24,7 @@ module alu #(
                     operation_select == 3'b100 ? mult_res :
                     operation_select == 3'b101 ? rshift_res :
                     operation_select == 3'b110 ? lshift_res :
+                    operation_select == 3'b111 ? inc_res :
                     0;
     assign zero_flag = result == 0;
     assign neg_flag = (operand1[dataSize-1] != result[dataSize-1]) && !zero_flag;
