@@ -11,7 +11,7 @@ module decoderStage #(parameter N=16)
                         output logic [2:0] AluOpCode
 );
     logic memoryInstruction, regWriteEn, preliminar_write_reg_from_1;
-    logic jump_instruction;
+    logic jump_instruction, inc_instruction;
 		
     assign jump_instruction = instruction[15] && ~instruction[14];
     assign memoryInstruction = instruction[15] && instruction[14];
@@ -30,7 +30,7 @@ module decoderStage #(parameter N=16)
 
     assign OverWriteNz = ~instruction[15] & (|instruction[14:12]);
 
-    assign RegToWrite = instruction[10:8];
+    assign RegToWrite = instruction[11:8];
 
 	assign Immediate = instruction[7:0];
 
