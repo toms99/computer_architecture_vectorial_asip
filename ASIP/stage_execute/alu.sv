@@ -24,8 +24,8 @@ module alu #(
                     operation_select == 3'b101 ? rshift_res :
                     operation_select == 3'b110 ? lshift_res :
                     0;
-    assign neg_flag = operand1[dataSize-1] != result[dataSize-1];
     assign zero_flag = result == 0;
+    assign neg_flag = (operand1[dataSize-1] != result[dataSize-1]) && !zero_flag;
 
 
 endmodule
