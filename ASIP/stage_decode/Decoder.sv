@@ -1,7 +1,9 @@
 module Decoder #(parameter N=16)
 					 (input logic [N-1:0] instruction,
 						output logic MemoryWrite,
+						output logic [2:0] ExecuteOp,
 						output logic [1:0] WriteRegFrom, //Bandera que indica de donde viene lo que vamos a escribir en el registro (memoria, imm, ALU)
+						output logic OverwriteNZ,
 						output logic [3:0] RegToWrite,
 						output logic [7:0] Immediate,
 						output logic RegWriteEnSc,
@@ -29,7 +31,9 @@ module Decoder #(parameter N=16)
 	
 	//Decodificacion directa
 	assign MemoryWrite = opcode == 4'b1100; // Escribir a memoria si opcode = SUPIX
+	assign ExecuteOp = opcode[2:0];	//instruction [14:12]
 	assign RegWriteEn = ~opcode[0] || opcode[1] & opcode[2];
+	assign OverwriteNZ = ~opcode[3];	//instruction ~[15]
 	assign RegToWrite = register_1;
 	assign Immediate = imm;
 	assign RegWriteEnSc = RegWriteEn & register_1[2];
