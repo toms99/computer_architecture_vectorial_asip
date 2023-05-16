@@ -11,7 +11,6 @@ module fetchStage(
         .reset(reset),
         .data_in(chosePc),
         .data_out(pc) );
-		  
 
     assign chosePc = pcWrEn ? newPc : pcM4; //Mux
 	instruction_memory rom(.address(chosePc),.rdata(instruction)); //ROM

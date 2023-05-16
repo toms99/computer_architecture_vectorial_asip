@@ -29,7 +29,7 @@ module decoderStage #(parameter N=16)
     assign AluOpCode = instruction[14:12];
 
     assign preliminar_write_reg_from_1 = ~instruction[15] & ~instruction[14] & ~instruction[13] & ~instruction[12];
-    assign WriteRegFrom[0] = preliminar_write_reg_from_1 ? 0 : ~instruction[15];
+    assign WriteRegFrom[0] = preliminar_write_reg_from_1 ? 1'b0 : ~instruction[15];
     assign WriteRegFrom[1] = (jump_instruction) ? jump_instruction : preliminar_write_reg_from_1;
 
     assign OverWriteNz = ~instruction[15] & (|instruction[14:12]);

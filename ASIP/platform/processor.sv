@@ -1,7 +1,7 @@
 module processor #(
     parameter registerSize = 8,
     parameter registerQuantity = 4,
-    parameter selectionBits = 2,
+    parameter selectionBits = 4,
     parameter vectorSize = 4
 ) (input clk, rst);
 
@@ -28,8 +28,8 @@ module processor #(
     // ####### FETCH STAGE #######
     logic [15:0] instruction_f;
 	fetchStage fetch(
-        .clk(clk), .reset(rst), .newPc(PCWrEn_mem),
-        .newPc(writeBackData_Mem[0]), .instruction(instruction_f)
+        .clk(clk), .reset(rst), .newPc(writeBackData_Mem[0]),
+        .pcWrEn(PCWrEn_Mem), .instruction(instruction_f)
     );
 	
 	pipe #(16) p_fetch_deco(clk, rst, instruction_f, instruction_d);
@@ -50,14 +50,14 @@ module processor #(
         .RegWriteEnVec(regWriteEnVec_dec), .PcWriteEn(pcWrEn_dec),
         .OverWriteNz(OverWriteNz_dec), .AluOpCode(AluOpCode_dec));
 
-    logic [vectorSize-1:0] [registerSize-1:0] operand1, operand2;
+    logic [vectorSize-1:0] [registerSize-1:0] operand1_dec, operand2_dec;
     regFile #(
         .registerSize(registerSize), .registerQuantity(registerQuantity),
         .selectionBits(selectionBits), .vectorSize(vectorSize)
     ) registerFile(
         .clk(clk), .reset(rst), .regWrEnSc(regWriteEnSc_Mem),
         .regWrEnVec(regWriteEnVec_Mem), .rSel1(instruction_d[11:8]),
-        .rSel2(instruction_d[7:4]), .regToWrite(RegToWrite_dec),
+        .rSel2(instruction_d[7:4]), .regToWrite(RegToWrite_Mem),
         .dataIn(writeBackData_Mem), .operand1(operand1_dec), .operand2(operand2_dec)
     );
 	 
@@ -91,6 +91,7 @@ module processor #(
 	
     // ######## EXECUTE STAGE ########
 	logic [vectorSize-1:0] [registerSize-1:0] result_ex, alu_result_mem;
+    logic pcWrEn_ex_out;
 	stage_execute #(.registerSize(registerSize),.vectorSize(vectorSize)) execute_stage
 	(   
         .clk(clk), .reset(rst), .overwriteFlags(OverWriteNz_ex),
@@ -100,9 +101,9 @@ module processor #(
 	
 	 //Pipe Ex-Mem
 	 logic [registerSize-1+10:0] condensed_mem_in, condensed_mem_out;
-	 assign condensed_mem_in =  {MemoryWrite_Ex, Immediate_Ex, writeRegFrom_Ex,
-                                 RegToWrite_Ex, pcWrEn_ex_out, regWriteEnSc_Ex, 
-                                 regWriteEnVec_Ex};
+	 assign condensed_mem_in =  {MemoryWrite_ex, Immediate_ex, writeRegFrom_ex,
+                                 RegToWrite_ex, pcWrEn_ex_out, regWriteEnSc_ex, 
+                                 regWriteEnVec_ex};
 	 pipe_vect #(registerSize+10, registerSize, vectorSize) p_ex_mem(clk, rst, condensed_mem_in, result_ex, matrix_zero, condensed_mem_out, alu_result_mem, matrix_zero);
 						
 	
