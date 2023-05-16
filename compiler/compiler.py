@@ -3,13 +3,6 @@ import os
 
 # Globals
 
-# Recibe el path del codigo fuente
-# Debe compilarse como py compiler.py -f <path>
-parser = argparse.ArgumentParser()
-parser.add_argument("-f", "--file", type=str, help="Ruta al código fuente")
-args = parser.parse_args()
-path_source_file = args.file
-
 
 register_dict = {
     # Uso general
@@ -109,25 +102,58 @@ def clean_empty_strings(lines):
     return result
 
 
+# Funciones agrupadoras
+
+
+def checks_input_file(path_source_file):
+    # Chequea si ingresó la ruta en los argumentos a la hora de ejecutarlo
+    checks_if_path_is_None(path_source_file)
+
+    # Chequea si la ruta existe
+    checks_if_path_exists(path_source_file)
+
+
+# Formatea el archivo a listas con los elementos de la instrucción
+# Retorna la matriz de instrucciones.
+def reformat_input_file(path_source_file):
+    # Obtiene las lineas del archivo sin los saltos de linea
+    lines_source_file = get_file_lines(path_source_file)
+
+    # Elimina todos los comentarios definidos por el caracter $
+    lines_source_file_no_comments = remove_all_comments(lines_source_file)
+    del lines_source_file
+
+    # Separar cada linea en una lista con cada elemento de la instrucción
+    instruction_matrix = make_lists_from_instructions(lines_source_file_no_comments)
+    del lines_source_file_no_comments
+
+    instruction_matrix = clean_empty_strings(instruction_matrix)
+
+    return instruction_matrix
+
+
 # main --------------------------------------------------------------------------------------------------------------------------------------
 
-# Chequea si ingresó la ruta en los argumentos a la hora de ejecutarlo
-checks_if_path_is_None(path_source_file)
 
-# Chequea si la ruta existe
-checks_if_path_exists(path_source_file)
+def main():
+    # Recibe el path del codigo fuente
+    # Debe compilarse como py compiler.py -f <path>
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-f", "--file", type=str, help="Ruta al código fuente")
+    args = parser.parse_args()
+    path_source_file = args.file
 
-# Obtiene las lineas del archivo sin los saltos de linea
-lines_source_file = get_file_lines(path_source_file)
+    # Chequea el archivo de entrada.
 
-# Elimina todos los comentarios definidos por el caracter $
-lines_source_file_no_comments = remove_all_comments(lines_source_file)
-del lines_source_file
+    checks_input_file(path_source_file)
 
-# Separar cada linea en una lista con cada elemento de la instrucción
-instruction_matrix = make_lists_from_instructions(lines_source_file_no_comments)
-del lines_source_file_no_comments
+    # Formate el archivo de entrada a una estructura de listas
 
-instruction_matrix = clean_empty_strings(instruction_matrix)
+    instruction_matrix = reformat_input_file(path_source_file)
 
-print(instruction_matrix)
+    print(instruction_matrix)
+
+
+# Verifica si el archivo se está ejecutando como el programa principal
+if __name__ == "__main__":
+    main()
