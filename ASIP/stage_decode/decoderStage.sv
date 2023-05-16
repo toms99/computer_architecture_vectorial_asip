@@ -6,7 +6,7 @@ module decoderStage #(parameter N=16)
 						output logic [7:0] Immediate,
 						output logic RegWriteEnSc,
 						output logic RegWriteEnVec,
-                        output logic PcWriteEn,
+                        output logic [2:0] PcWriteEn,
                         output logic OverWriteNz,
                         output logic [2:0] AluOpCode
 );
@@ -18,7 +18,11 @@ module decoderStage #(parameter N=16)
 
     // Outputs
 
-    assign PcWriteEn = instruction[15] && ~instruction[14];
+    assign PcWriteEn = {
+        instruction[15] && ~instruction[14] && instruction[13] && ~instruction[12],
+        instruction[15] && ~instruction[14] && ~instruction[13] && ~instruction[12],
+        instruction[15] && ~instruction[14] && ~instruction[13] && instruction[12]
+    };
 
     assign MemoryWrite = memoryInstruction && ~instruction[13] && ~instruction[12];
 

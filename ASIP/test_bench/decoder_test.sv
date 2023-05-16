@@ -8,7 +8,7 @@ module decoder_test();
     logic RegWriteEnSc;
     logic RegWriteEnVec;
     logic OverWriteNz;
-    logic PcWriteEn;
+    logic [2:0] PcWriteEn;
     logic [2:0] AluOpCode;
 	
 	decoderStage decoder(.instruction(instruction),
@@ -68,31 +68,29 @@ module decoder_test();
         // 4: jmp
         instruction = 16'hA015;
         #10;
-        assert (PcWriteEn == 1) else $error("Test 4: PcWriteEn should be 1");
+        assert (PcWriteEn == 3'b100) else $error("Test 4: PcWriteEn should be 3'b100");
         assert (MemoryWrite == 0) else $error("Test 4: MemoryWrite should be 0");
         assert (OverWriteNz == 0) else $error("Test 4: OverWriteNz should be 0");
         assert (Immediate == 21) else $error("Test 4: Immediate should be 21");
         assert (RegWriteEnSc == 0) else $error("Test 4: RegWriteEnSc should be 0");
         assert (RegWriteEnVec == 0) else $error("Test 4: RegWriteEnVec should be 0");
         
-        // TODO: I think we are missing a flag
         // 5: je
         #10;
         instruction = 16'h8010;
         #10;
-        assert (PcWriteEn == 1) else $error("Test 5: PcWriteEn should be 1");
+        assert (PcWriteEn == 3'b010) else $error("Test 5: PcWriteEn should be 3'b010");
         assert (MemoryWrite == 0) else $error("Test 5: MemoryWrite should be 0");
         assert (OverWriteNz == 0) else $error("Test 5: OverWriteNz should be 0");
         assert (Immediate == 16) else $error("Test 5: Immediate should be 16");
         assert (RegWriteEnSc == 0) else $error("Test 5: RegWriteEnSc should be 0");
         assert (RegWriteEnVec == 0) else $error("Test 5: RegWriteEnVec should be 0");
 
-        // TODO: Here as well
         // 6: jne
         #10;
         instruction = 16'h9032;
         #10;
-        assert (PcWriteEn == 1) else $error("Test 6: PcWriteEn should be 1");
+        assert (PcWriteEn == 3'b001) else $error("Test 6: PcWriteEn should be 3'b001");
         assert (MemoryWrite == 0) else $error("Test 6: MemoryWrite should be 0");
         assert (OverWriteNz == 0) else $error("Test 6: OverWriteNz should be 0");
         assert (Immediate == 50) else $error("Test 6: Immediate should be 50");
