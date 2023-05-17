@@ -13,16 +13,17 @@ module processor #(
 	logic [registerSize-1:0] Immediate, newPc;
 	logic regWriteEnSc, regWriteEnVec, pcWrEn;
 	
+	// Variables que entran al Memory Stage
+	logic MemoryWrite_Mem, regWriteEnSc_Mem, regWriteEnVec_Mem;
+	logic [1:0] WriteRegFrom_Mem; 
+	logic [3:0] RegToWrite_Mem;
+	logic [registerSize-1:0] Immediate_Mem;
+	logic PCWrEn_Mem;
+   logic [vectorSize-1:0] [registerSize-1:0] writeBackData_Mem;
+	
 	//Matriz de ceros
 	// Inicializar la matriz a cero
 	logic [vectorSize-1:0] [registerSize-1:0] matrix_zero;
-   /*initial begin
-	  for (int i = 0; i < vectorSize; i++) begin
-		 for (int j = 0; j < registerSize; j++) begin
-		   matrix_zero[i][j] = 0;
-		 end
-	  end
-   end*/
 	
 	
     // ####### FETCH STAGE #######
@@ -108,13 +109,6 @@ module processor #(
 						
 	
     // ######## WRITE-BACK STAGE ########
-	// Variables que entran al Memory Stage
-	logic MemoryWrite_Mem, regWriteEnSc_Mem, regWriteEnVec_Mem;
-	logic [1:0] WriteRegFrom_Mem; 
-	logic [3:0] RegToWrite_Mem;
-	logic [registerSize-1:0] Immediate_Mem;
-	logic PCWrEn_Mem;
-    logic [vectorSize-1:0] [registerSize-1:0] writeBackData_Mem;
     assign {MemoryWrite_Mem, Immediate_Mem, WriteRegFrom_Mem, RegToWrite_Mem,
 				PCWrEn_Mem, regWriteEnSc_Mem, regWriteEnVec_Mem} = condensed_mem_out;
     stage_writeback #(
@@ -123,6 +117,6 @@ module processor #(
         .clk(clk), .reset(rst), .writeEnable(MemoryWrite_Mem),
         .writeRegFrom(WriteRegFrom_Mem), .address(Immediate_Mem),
         .imm(Immediate_Mem), .writeData(alu_result_mem),
-        .aluResult(alu_result_mem), .writeBackData(writeBackData_Mem),
+        .aluResult(alu_result_mem), .writeBackData(writeBackData_Mem)
     );
 endmodule

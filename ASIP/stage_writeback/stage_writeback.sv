@@ -26,9 +26,15 @@ module stage_writeback #(
     ) immExtender (
         .inData(imm), .outData(extended_imm)
     );
-
-    assign writeBackData = writeRegFrom == 0 ? readData :
-                    writeRegFrom == 1 ? aluResult:
-                    extended_imm;
+	  
+	  logic [vecSize-1:0] [registerSize-1:0] writeBackDataTMP;
+	 always_comb begin
+		case (writeRegFrom)
+			0: writeBackDataTMP = readData;
+			1: writeBackDataTMP = aluResult;
+			2: writeBackDataTMP = extended_imm;
+		endcase
+	 end 
+	 assign writeBackData = writeBackDataTMP;
 
 endmodule

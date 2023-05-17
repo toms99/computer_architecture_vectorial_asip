@@ -58,8 +58,7 @@ module stage_writeback_test #(
         writeRegFrom = 1;
         #10
         assert (writeBackData == 32'hCAFEBABE) else $error("Test 4 failed: Reading an aluResult");
-        #20
-        $finish;
+        #20;
     end
 
 endmodule

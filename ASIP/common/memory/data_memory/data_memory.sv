@@ -15,6 +15,9 @@ module data_memory #(
     logic [dataSize-1:0] RAM [memorySize-1:0];
 	initial begin
 		$readmemh("RAM.txt", RAM);
+		/*for (int i = 0; i < memorySize ; i++) begin
+			RAM[i] = 'b0;
+		end*/
 	end
     
     always_ff @(posedge clk) begin
@@ -29,4 +32,10 @@ module data_memory #(
                                 bits_to_address_bytes_in_addr] + i * bytes_in_addr];
         end
     end
+	 
+	 always_ff @(negedge clk)begin
+		 if (write_enable) begin 
+			$writememh("RAM.txt",RAM);
+		 end
+	 end
 endmodule
