@@ -1,6 +1,12 @@
 
+XOR R0 R4 $ dos operandos 0
+JE 0x0110 $ un operandos  4
+XOR R0 R4 $ dos operandos 8
+JE 0x0110 $ un operandos  c
+
 branch:
-XOR R0 R4 $ dos operandos
-JE 0x0110 $ un operandos
+XOR R0 R4 $ dos operandos 10
+JE 0x0110 $ un operandos  14
+
 
 

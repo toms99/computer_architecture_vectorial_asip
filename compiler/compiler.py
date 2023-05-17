@@ -26,20 +26,38 @@ register_dict = {
 }
 
 op_code_dict = {
+    "JMP": "1010",
     "JE": "1000",
     "JNE": "1001",
     "INC": "0111",
     "LOPIX": "1101",
-    "SUPIX": "1100",
+    "SVPIX": "1100",
     "LOSC": "0000",
     "LMEM": "1111",
     "XOR": "0001",
     "ECAE": "0010",
     "DCAE": "0011",
-    "MULC": "0100",
+    "MUL": "0100",
     "RSHF": "0101",
     "LSHF": "0110",
 }
+
+# Branch que almacenará
+branchs_dict = {}
+
+# listas de instrucciones que esperan por cantidad de argumentos
+one_operand_instructions = ["JMP", "JE", "JNE", "INC", "LOPIX", "SVPIX"]
+two_operand_instructions = [
+    "LOSC",
+    "LMEM",
+    "XOR",
+    "ECAE",
+    "DCAE",
+    "MUL",
+    "RSHF",
+    "LSHF",
+]
+
 
 # Funciones
 
@@ -131,25 +149,63 @@ def reformat_input_file(path_source_file):
     return instruction_matrix
 
 
+def calc_binary_from_counter(compiled_instructions_counter):
+    # Multiplicar el contador por 4
+    result_decimal = compiled_instructions_counter * 4
+
+    # Convertir el resultado a formato binario de 8 bits
+    result_binario = bin(result_decimal & 0xFF)[2:].zfill(8)
+
+    return result_binario
+
+
+def process_branch_instruction(instruction, compiled_instructions_counter):
+    global branchs_dict
+    binary_address = calc_binary_from_counter(compiled_instructions_counter)
+    if instruction not in branchs_dict:
+        branchs_dict[instruction] = binary_address
+    else:
+        raise Exception(f"La branch {instruction} ya fue definida anteriormente.")
+
+
 def compile_instructions(instruction_matrix):
-    compiled_instructios = []
-    compiled_instructions = 0
+    compiled_instructios_result = []
+    compiled_instructions_counter = 0
+    line_counter = 1
     for instruction_list in instruction_matrix:
         instruction_length = len(instruction_list)
         # Comprueba si la linea es vacia.
         # En ese caso se ignora la linea
         if instruction_length == 0:
-            print("empty")
+            line_counter += 1
             pass
         # Comprueba la definición de branches.
-        elif instruction_length == 1 and ":" in instruction_list[0]:
-            print("branch")
+        elif instruction_length == 1:
+            if ":" in instruction_list[0]:
+                instruction = instruction_list[0].replace(":", "")
+                process_branch_instruction(
+                    instruction, compiled_instructions_counter + 1
+                )
+                line_counter += 1
+            else:
+                raise Exception(
+                    f"Branch definida de manera incorrecta en la linea {line_counter}: {instruction_list[0]}. Posible : faltante."
+                )
+
         # Comprueba instrucciones de un operando
         elif instruction_length == 2:
+            line_counter += 1
+            compiled_instructions_counter += 1
             print("instrucciones de un operando")
+
         # Comprueba instrucciones de dos operandos
         elif instruction_length == 3:
+            line_counter += 1
+            compiled_instructions_counter += 1
             print("instrucciones de dos operandos")
+
+        else:
+            raise Exception(f"Instrucción inválida en la linea {line_counter}")
 
 
 # main --------------------------------------------------------------------------------------------------------------------------------------
@@ -173,6 +229,8 @@ def main():
 
     # Compila las instrucciones
     compile_instructions(instruction_matrix)
+
+    print(branchs_dict)
 
 
 # Verifica si el archivo se está ejecutando como el programa principal
