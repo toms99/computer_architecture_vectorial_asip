@@ -58,7 +58,7 @@ module processor #(
     ) registerFile(
         .clk(clk), .reset(rst), .regWrEnSc(regWriteEnSc_Mem),
         .regWrEnVec(regWriteEnVec_Mem), .rSel1(instruction_d[11:8]),
-        .rSel2(instruction_d[7:4]), .regToWrite(RegToWrite_Mem[2:0]),
+        .rSel2(instruction_d[7:4]), .regToWrite(RegToWrite_Mem),
         .dataIn(writeBackData_Mem), .operand1(operand1_dec), .operand2(operand2_dec)
     );
 	 

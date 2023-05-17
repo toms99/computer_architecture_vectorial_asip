@@ -57,8 +57,7 @@ module scalarRegFile_test #(
         #10
         assert (reg1Out == 8'hFE) else $error("Register port 1 read incorrect");
         assert (reg2Out == 8'hFA) else $error("Register port 2 read incorrect");
-        #20
-        $finish;
+        #20;
     end
 
 endmodule
