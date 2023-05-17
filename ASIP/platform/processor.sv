@@ -16,13 +16,13 @@ module processor #(
 	//Matriz de ceros
 	// Inicializar la matriz a cero
 	logic [vectorSize-1:0] [registerSize-1:0] matrix_zero;
-   initial begin
+   /*initial begin
 	  for (int i = 0; i < vectorSize; i++) begin
 		 for (int j = 0; j < registerSize; j++) begin
 		   matrix_zero[i][j] = 0;
 		 end
 	  end
-   end
+   end*/
 	
 	
     // ####### FETCH STAGE #######
@@ -57,7 +57,7 @@ module processor #(
     ) registerFile(
         .clk(clk), .reset(rst), .regWrEnSc(regWriteEnSc_Mem),
         .regWrEnVec(regWriteEnVec_Mem), .rSel1(instruction_d[11:8]),
-        .rSel2(instruction_d[7:4]), .regToWrite(RegToWrite_Mem),
+        .rSel2(instruction_d[7:4]), .regToWrite(RegToWrite_Mem[2:0]),
         .dataIn(writeBackData_Mem), .operand1(operand1_dec), .operand2(operand2_dec)
     );
 	 
@@ -115,9 +115,8 @@ module processor #(
 	logic [registerSize-1:0] Immediate_Mem;
 	logic PCWrEn_Mem;
     logic [vectorSize-1:0] [registerSize-1:0] writeBackData_Mem;
-    assign {MemoryWrite_Mem, regWriteEnSc_Mem, regWriteEnVec_Mem, 
-            WriteRegFrom_Mem, RegToWrite_Mem, Immediate_Mem, 
-            PCWrEn_Mem} = condensed_mem_out;
+    assign {MemoryWrite_Mem, Immediate_Mem, WriteRegFrom_Mem, RegToWrite_Mem,
+				PCWrEn_Mem, regWriteEnSc_Mem, regWriteEnVec_Mem} = condensed_mem_out;
     stage_writeback #(
         .vecSize(vectorSize), .registerSize(registerSize)
     ) writeback_stage (
