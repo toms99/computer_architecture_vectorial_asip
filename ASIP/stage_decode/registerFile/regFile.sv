@@ -1,14 +1,13 @@
 module regFile #(
     parameter registerSize = 8,
     parameter registerQuantity = 4,
-    parameter selectionBits = 2, // 3 for 8 registers, 2 for 4 registers, and so on
+    parameter selectionBits = 4, // 3 for 8 registers, 2 for 4 registers, and so on
     parameter vectorSize = 4)
 (
     input clk, reset,
     input regWrEnSc, regWrEnVec,
-    // We dont substract 1 intentionally because we are using the MSB as selector
-    input [selectionBits:0] rSel1, rSel2,
-    input [selectionBits:0] regToWrite,
+    input [selectionBits-1:0] rSel1, rSel2,
+    input [selectionBits-1:0] regToWrite,
 
     input [vectorSize-1:0] [registerSize-1:0] dataIn,
     output [vectorSize-1:0] [registerSize-1:0] operand1, operand2
@@ -18,7 +17,7 @@ module regFile #(
     logic [vectorSize-1:0] [registerSize-1:0] vector_reg1Out, vector_reg2Out;
     logic [vectorSize-1:0] [registerSize-1:0] vectorized_scalar_reg1Out, vectorized_scalar_reg2Out;
 
-    scalarRegisterFile #(registerSize, registerQuantity, selectionBits) scalarRegisters(
+    scalarRegisterFile #(registerSize, 16, selectionBits) scalarRegisters(
         .clk(clk), .reset(reset),
         .regWrEn(regWrEnSc), .rSel1(rSel1), .rSel2(rSel2),
         .regToWrite(regToWrite), .dataIn(dataIn[0]), // For scalars we will just take in consideration the first element
@@ -33,7 +32,7 @@ module regFile #(
     );
 
     vecRegisterFile #(
-        registerSize, registerQuantity, selectionBits, vectorSize
+        registerSize, registerQuantity, selectionBits-1, vectorSize
     ) vectorialRegisters(
         .clk(clk), .reset(reset),
         .regWrEn(regWrEnVec), .rSel1(rSel1), .rSel2(rSel2), 
@@ -42,6 +41,6 @@ module regFile #(
     );
 
     // MSB as selector for vector/scalar
-    assign operand1 = rSel1[selectionBits] ? vectorized_scalar_reg1Out : vector_reg1Out;
-    assign operand2 = rSel2[selectionBits] ? vectorized_scalar_reg2Out : vector_reg2Out;
+    assign operand1 = rSel1[selectionBits-2] ? vectorized_scalar_reg1Out : vector_reg1Out;
+    assign operand2 = rSel2[selectionBits-2] ? vectorized_scalar_reg2Out : vector_reg2Out;
 endmodule
