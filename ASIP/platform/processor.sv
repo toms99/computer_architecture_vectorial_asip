@@ -7,7 +7,7 @@ module processor #(
 
 	logic [15:0] instruction_f, instruction_d, ReadData;
 	logic [15:0] PC;
-	logic MemoryWrite;
+	logic MemoryWrite, PCWrEn_mem = 0;
 	logic [15:0] dataAddress, WriteData;
     logic [vectorSize-1:0] [registerSize-1:0] writeBackData;
     logic [vectorSize-1:0] [registerSize-1:0] operand1, operand2;
@@ -20,13 +20,13 @@ module processor #(
 	//Matriz de ceros
 	// Inicializar la matriz a cero
 	logic [vectorSize-1:0] [registerSize-1:0] matrix_zero;
-   initial begin
+   /*initial begin
 	  for (int i = 0; i < vectorSize; i++) begin
 		 for (int j = 0; j < registerSize; j++) begin
 		   matrix_zero[i][j] = 0;
 		 end
 	  end
-   end
+   end*/
 	
 	
 	fetchStage fetch(clk, rst, PCWrEn_mem, newPc, instruction_f);
@@ -41,7 +41,7 @@ module processor #(
     ) registerFile(
         .clk(clk), .reset(rst), .regWrEnSc(regWriteEnSc),
         .regWrEnVec(regWriteEnVec), .rSel1(instruction_d[11:8]),
-        .rSel2(instruction_d[7:4]), .regToWrite(RegToWrite),
+        .rSel2(instruction_d[7:4]), .regToWrite(RegToWrite[2:0]),
         .dataIn(writeBackData), .operand1(operand1), .operand2(operand2)
     );
 	 
@@ -82,15 +82,14 @@ module processor #(
 	logic [3:0] RegToWrite_Mem;
 	logic [registerSize-1:0] Immediate_Mem;
 	logic PCWrEn_Mem;
-    assign {MemoryWrite_Mem, regWriteEnSc_Mem, regWriteEnVec_Mem, 
-            WriteRegFrom_Mem, RegToWrite_Mem, Immediate_Mem, 
-            PCWrEn_Mem} = condensed_mem_out;
+    assign {MemoryWrite_Mem, Immediate_Mem, WriteRegFrom_Mem, RegToWrite_Mem,
+				PCWrEn_Mem, regWriteEnSc_Mem, regWriteEnVec_Mem} = condensed_mem_out;
     stage_writeback #(
         .vecSize(vectorSize), .registerSize(registerSize)
     ) writeback_stage (
         .clk(clk), .reset(rst), .writeEnable(MemoryWrite_Mem),
         .writeRegFrom(WriteRegFrom_Mem), .address(Immediate_Mem),
         .imm(Immediate_Mem), .writeData(alu_result_mem),
-        .aluResult(alu_result_mem), .writeBackData(writeBackData),
+        .aluResult(alu_result_mem), .writeBackData(writeBackData)
     );
 endmodule
