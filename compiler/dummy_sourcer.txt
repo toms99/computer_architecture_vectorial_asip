@@ -1,19 +1,25 @@
+JMP inicio  $ 0
+JE Branch   $ 4
+JNE final   $ 8
+
+
+
 inicio:
-XOR R0 R4 $ dos operandos 0
-XOR R0 R4 $ dos operandos 4
-INC $ inc 8
+INC         $  c
+LOPIX R0    $  14
+SVPIX R2    $  18
 
-JMP inicio $ c
-JE branch $ 10
-JNE final $ 14
-
-LOPIX R1
-SVPIX R3
 
 branch:
-XOR R0 R4 $ dos operandos 18
-INC            $          1c
+LOSC R4 #125 $ 1c    
+LMEM R5 0xff $ 20
 
 final:
-XOR R0 R4 $ dos operandos 20
+XOR R4 R0 $  24
+ECAE R5 R1 $ 28
+DCAE R6 R2 $ 2c
+MUL R7 R3 $  30
+RSHF R4 R0 $ 34
+LSHF R5 R1 $ 38
+
 

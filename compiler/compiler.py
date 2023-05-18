@@ -230,6 +230,84 @@ def compile_one_op(instruction):
         return f"{command_opcode}{register_code}00000000"
 
 
+def get_binary_from_hexa_dec(string):
+    if string.startswith("0X"):
+        valor_hex = string[2:]
+        try:
+            decimal = int(valor_hex, 16)
+            binario = bin(decimal)[2:].zfill(8)
+            return binario
+        except ValueError:
+            raise Exception(f"Error: Valor hexadecimal inválido: {string}")
+
+    elif string.startswith("#"):
+        valor_dec = string[1:]
+        try:
+            decimal = int(valor_dec)
+            if 0 <= decimal <= 255:
+                binario = bin(decimal)[2:].zfill(8)
+                return binario
+            else:
+                raise Exception(
+                    f"Error: Valor decimal fuera de rango (0-255): {string}"
+                )
+        except ValueError:
+            raise Exception(f"Error: Valor decimal inválido: {string}")
+    else:
+        raise Exception(f"Error: Formato de string inválido: {string}")
+
+
+# "LOSC", "LMEM"
+def compile_mem_reg_inst(instruction):
+    global register_dict, op_code_dict, escalar_regs
+    command = instruction[0]
+    command_opcode = op_code_dict[command]
+    register = instruction[1]
+    imm = instruction[2]
+    imm_binary = get_binary_from_hexa_dec(imm)
+
+    if register not in escalar_regs:
+        raise Exception(
+            f"Registro no escalar en la instrucción: {command} {register} {imm}"
+        )
+    else:
+        register_code = register_dict[register]
+        return f"{command_opcode}{register_code}{imm_binary}"
+
+
+# "XOR", "ECAE", "DCAE", "MUL", "RSHF", "LSHF"
+def compile_two_regs_inst(instruction):
+    global register_dict, op_code_dict, escalar_regs, vectorial_regs
+    command = instruction[0]
+    command_opcode = op_code_dict[command]
+    r1 = instruction[1]
+    r2 = instruction[2]
+    if r1 not in escalar_regs:
+        raise Exception(
+            f"En la instruccion: {command} {r1} {r2}, {r1} debe ser escalar."
+        )
+    if r2 not in vectorial_regs:
+        raise Exception(
+            f"En la instruccion: {command} {r1} {r2}, {r2} debe ser vectorial."
+        )
+    else:
+        r1_code = register_dict[r1]
+        r2_code = register_dict[r2]
+        return f"{command_opcode}{r1_code}{r2_code}0000"
+
+
+def save_results(results, file_name):
+    try:
+        with open(file_name, "w") as file:
+            for item in results:
+                file.write(str(item) + "\n")
+        print(
+            f"Los resultados se han guardado en el archivo '{file_name}' correctamente."
+        )
+    except IOError:
+        print("Error al guardar la lista en el archivo.")
+
+
 def compile_instructions(instruction_matrix):
     # reformat list. elimina lineas vacias
     instruction_matrix = remove_empty_lines(instruction_matrix)
@@ -248,11 +326,8 @@ def compile_instructions(instruction_matrix):
         if instruction_length == 1:
             if instruction_list[0] == "INC":
                 command_opcode = op_code_dict["INC"]
-                instruction_code = f"{command_opcode}111000000000"
-                compiled_instructios_result.append(instruction_code)
+                compiled_instruction = f"{command_opcode}111000000000"
 
-                line_counter += 1
-                compiled_instructions_counter += 1
             else:
                 raise Exception(f"Instrucción inválida en la linea {line_counter}")
         # Comprueba instrucciones de dos operandos
@@ -261,25 +336,35 @@ def compile_instructions(instruction_matrix):
                 # Si es una de las siguientes instrucciones: "JMP", "JE", "JNE"
                 if instruction_list[0] in one_operand_instructions[:3]:
                     compiled_instruction = compile_jumps(instruction_list)
-                    compiled_instructios_result.append(compiled_instruction)
+
                 # Si es una de las siguientes instrucciones: "INC", "LOPIX", "SVPIX"
                 else:
                     compiled_instruction = compile_one_op(instruction_list)
-                    compiled_instructios_result.append(compiled_instruction)
 
-                line_counter += 1
-                compiled_instructions_counter += 1
             else:
                 raise Exception(f"Instrucción inválida en la linea {line_counter}")
 
         # Comprueba instrucciones de dos operandos
+        # "LOSC", "LMEM", "XOR", "ECAE", "DCAE", "MUL", "RSHF", "LSHF"
         elif instruction_length == 3:
-            line_counter += 1
-            compiled_instructions_counter += 1
+            if instruction_list[0] in two_operand_instructions:
+                # "LOSC", "LMEM"
+                if instruction_list[0] in two_operand_instructions[:2]:
+                    compiled_instruction = compile_mem_reg_inst(instruction_list)
+                # "XOR", "ECAE", "DCAE", "MUL", "RSHF", "LSHF"
+                else:
+                    compiled_instruction = compile_two_regs_inst(instruction_list)
+
+            else:
+                raise Exception(f"Instrucción inválida en la linea {line_counter}")
 
         else:
             print(instruction_list)
             raise Exception(f"Instrucción inválida en la linea {line_counter}")
+
+        compiled_instructios_result.append(compiled_instruction)
+        line_counter += 1
+        compiled_instructions_counter += 1
 
     return compiled_instructios_result
 
@@ -306,7 +391,7 @@ def main():
     # Compila las instrucciones
     compiled_instructions = compile_instructions(instruction_matrix)
 
-    print(compiled_instructions)
+    save_results(compiled_instructions, "results.txt")
 
 
 # Verifica si el archivo se está ejecutando como el programa principal
