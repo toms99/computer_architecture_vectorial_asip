@@ -10,6 +10,11 @@ module stage_writeback #(
 );
     
     logic [vecSize-1:0] [registerSize-1:0] readData, extended_imm;
+	 logic [1:0] writeRegFrom_delayed;
+
+	 
+	 register #(2) reg_ (clk, reset,writeRegFrom, writeRegFrom_delayed);
+	 
     data_memory #(
         .dataSize(registerSize),
         .addressingSize(registerSize),
@@ -29,7 +34,7 @@ module stage_writeback #(
 	  
 	  logic [vecSize-1:0] [registerSize-1:0] writeBackDataTMP;
 	 always_comb begin
-		case (writeRegFrom)
+		case (writeRegFrom_delayed)
 			0: writeBackDataTMP = readData;
 			1: writeBackDataTMP = aluResult;
 			2: writeBackDataTMP = extended_imm;
