@@ -25,6 +25,9 @@ register_dict = {
     "R15": "1111",  # PC
 }
 
+vectorial_regs = ["R0", "R1", "R2", "R3"]
+escalar_regs = ["R4", "R5", "R6", "R7"]
+
 op_code_dict = {
     "JMP": "1010",
     "JE": "1000",
@@ -47,6 +50,7 @@ branchs_dict = {}
 
 # listas de instrucciones que esperan por cantidad de argumentos
 one_operand_instructions = ["JMP", "JE", "JNE", "INC", "LOPIX", "SVPIX"]
+
 two_operand_instructions = [
     "LOSC",
     "LMEM",
@@ -168,35 +172,67 @@ def process_branch_instruction(instruction, compiled_instructions_counter):
         raise Exception(f"La branch {instruction} ya fue definida anteriormente.")
 
 
+def remove_empty_lines(list):
+    result = []
+    for item in list:
+        if len(item) != 0:
+            result.append(item)
+    return result
+
+
+def fill_branch_dict(instruction_matrix):
+    instruction_counter = 0
+    # devolverá la listas sin las instrucciones de branch
+    result = []
+    for instruction_list in instruction_matrix:
+        if len(instruction_list) == 1:
+            if ":" in instruction_list[0]:
+                instruction = instruction_list[0].replace(":", "")
+                process_branch_instruction(instruction, instruction_counter + 1)
+            else:
+                raise Exception(
+                    f"Branch definida de manera incorrecta en la branch {instruction_list[0]}. Posible : faltante."
+                )
+        else:
+            result.append(instruction_list)
+            instruction_counter += 1
+    return result
+
+
 def compile_instructions(instruction_matrix):
+    # reformat list. elimina lineas vacias
+    instruction_matrix = remove_empty_lines(instruction_matrix)
+
+    # Popula el diccionario de branches y elimina las instrucciones de branching
+    instruction_matrix = fill_branch_dict(instruction_matrix)
+
+    print(branchs_dict)
+    print(instruction_matrix)
+
     compiled_instructios_result = []
     compiled_instructions_counter = 0
     line_counter = 1
+
+    # calcula la direccion de las branches y las elimina de la lista de instrucciones
+
     for instruction_list in instruction_matrix:
         instruction_length = len(instruction_list)
-        # Comprueba si la linea es vacia.
-        # En ese caso se ignora la linea
-        if instruction_length == 0:
-            line_counter += 1
+        if False:
             pass
-        # Comprueba la definición de branches.
-        elif instruction_length == 1:
-            if ":" in instruction_list[0]:
-                instruction = instruction_list[0].replace(":", "")
-                process_branch_instruction(
-                    instruction, compiled_instructions_counter + 1
-                )
-                line_counter += 1
-            else:
-                raise Exception(
-                    f"Branch definida de manera incorrecta en la linea {line_counter}: {instruction_list[0]}. Posible : faltante."
-                )
 
         # Comprueba instrucciones de un operando
         elif instruction_length == 2:
-            line_counter += 1
-            compiled_instructions_counter += 1
-            print("instrucciones de un operando")
+            if instruction_list[0] in one_operand_instructions:
+                # Si es una de las siguientes instrucciones: "JMP", "JE", "JNE"
+                if True:  # instruction_list[0] in one_operand_instructions[:3]:
+                    pass
+                else:
+                    pass
+
+                line_counter += 1
+                compiled_instructions_counter += 1
+            else:
+                raise Exception(f"Instrucción inválida en la linea {line_counter}")
 
         # Comprueba instrucciones de dos operandos
         elif instruction_length == 3:
