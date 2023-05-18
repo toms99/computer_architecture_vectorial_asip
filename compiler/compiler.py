@@ -186,9 +186,12 @@ def fill_branch_dict(instruction_matrix):
     result = []
     for instruction_list in instruction_matrix:
         if len(instruction_list) == 1:
-            if ":" in instruction_list[0]:
+            if instruction_list[0] == "INC":
+                result.append(instruction_list)
+                instruction_counter += 1
+            elif ":" in instruction_list[0]:
                 instruction = instruction_list[0].replace(":", "")
-                process_branch_instruction(instruction, instruction_counter + 1)
+                process_branch_instruction(instruction, instruction_counter)
             else:
                 raise Exception(
                     f"Branch definida de manera incorrecta en la branch {instruction_list[0]}. Posible : faltante."
@@ -199,15 +202,39 @@ def fill_branch_dict(instruction_matrix):
     return result
 
 
+def compile_jumps(instruction):
+    global branchs_dict, op_code_dict
+    command = instruction[0]
+    command_opcode = op_code_dict[command]
+    branch = instruction[1]
+
+    try:
+        branch_dir = branchs_dict[branch]
+    except:
+        raise Exception(f"La branch {branch} no existe")
+
+    return f"{command_opcode}0000{branch_dir}"
+
+
+# "INC", "LOPIX", "SVPIX"
+def compile_one_op(instruction):
+    global register_dict, op_code_dict, vectorial_regs
+    command = instruction[0]
+    command_opcode = op_code_dict[command]
+    register = instruction[1]
+
+    if register not in vectorial_regs:
+        raise Exception(f"Registro {register} inválido en la instrucción {instruction}")
+    else:
+        register_code = register_dict[register]
+        return f"{command_opcode}{register_code}00000000"
+
+
 def compile_instructions(instruction_matrix):
     # reformat list. elimina lineas vacias
     instruction_matrix = remove_empty_lines(instruction_matrix)
-
     # Popula el diccionario de branches y elimina las instrucciones de branching
     instruction_matrix = fill_branch_dict(instruction_matrix)
-
-    print(branchs_dict)
-    print(instruction_matrix)
 
     compiled_instructios_result = []
     compiled_instructions_counter = 0
@@ -217,17 +244,28 @@ def compile_instructions(instruction_matrix):
 
     for instruction_list in instruction_matrix:
         instruction_length = len(instruction_list)
-        if False:
-            pass
+        # Comprueba instrucciones de un operando. Solamente INC. Las branchs ya han sido procesadas
+        if instruction_length == 1:
+            if instruction_list[0] == "INC":
+                command_opcode = op_code_dict["INC"]
+                instruction_code = f"{command_opcode}111000000000"
+                compiled_instructios_result.append(instruction_code)
 
-        # Comprueba instrucciones de un operando
+                line_counter += 1
+                compiled_instructions_counter += 1
+            else:
+                raise Exception(f"Instrucción inválida en la linea {line_counter}")
+        # Comprueba instrucciones de dos operandos
         elif instruction_length == 2:
             if instruction_list[0] in one_operand_instructions:
                 # Si es una de las siguientes instrucciones: "JMP", "JE", "JNE"
-                if True:  # instruction_list[0] in one_operand_instructions[:3]:
-                    pass
+                if instruction_list[0] in one_operand_instructions[:3]:
+                    compiled_instruction = compile_jumps(instruction_list)
+                    compiled_instructios_result.append(compiled_instruction)
+                # Si es una de las siguientes instrucciones: "INC", "LOPIX", "SVPIX"
                 else:
-                    pass
+                    compiled_instruction = compile_one_op(instruction_list)
+                    compiled_instructios_result.append(compiled_instruction)
 
                 line_counter += 1
                 compiled_instructions_counter += 1
@@ -238,10 +276,12 @@ def compile_instructions(instruction_matrix):
         elif instruction_length == 3:
             line_counter += 1
             compiled_instructions_counter += 1
-            print("instrucciones de dos operandos")
 
         else:
+            print(instruction_list)
             raise Exception(f"Instrucción inválida en la linea {line_counter}")
+
+    return compiled_instructios_result
 
 
 # main --------------------------------------------------------------------------------------------------------------------------------------
@@ -264,9 +304,9 @@ def main():
     instruction_matrix = reformat_input_file(path_source_file)
 
     # Compila las instrucciones
-    compile_instructions(instruction_matrix)
+    compiled_instructions = compile_instructions(instruction_matrix)
 
-    print(branchs_dict)
+    print(compiled_instructions)
 
 
 # Verifica si el archivo se está ejecutando como el programa principal

@@ -1,12 +1,16 @@
-
+inicio:
 XOR R0 R4 $ dos operandos 0
-JE 0x0110 $ un operandos  4
-XOR R0 R4 $ dos operandos 8
-JE 0x0  110 $ un operandos  c
+XOR R0 R4 $ dos operandos 4
+INC $ inc 8
+
+JMP inicio $ c
+JE branch $ 10
+JNE final $ 14
 
 branch:
-XOR R0 R4 $ dos operandos 10
-JE 0x0110 $ un operandos  14
+XOR R0 R4 $ dos operandos 18
+INC            $          1c
 
-
+final:
+XOR R0 R4 $ dos operandos 20
 
