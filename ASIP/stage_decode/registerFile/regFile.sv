@@ -9,7 +9,7 @@ module regFile #(
     input [selectionBits-1:0] rSel1, rSel2,
     input [selectionBits-1:0] regToWrite,
 
-    input [vectorSize-1:0] [registerSize-1:0] dataIn,
+    input [vectorSize-1:0] [registerSize-1:0] dataIn_mem, dataIn_chip,
     output [vectorSize-1:0] [registerSize-1:0] operand1, operand2
 );
 
@@ -20,7 +20,7 @@ module regFile #(
     scalarRegisterFile #(registerSize, 16, selectionBits) scalarRegisters(
         .clk(clk), .reset(reset),
         .regWrEn(regWrEnSc), .rSel1(rSel1), .rSel2(rSel2),
-        .regToWrite(regToWrite), .dataIn(dataIn[0]), // For scalars we will just take in consideration the first element
+        .regToWrite(regToWrite), .dataIn(dataIn_chip[0]), // For scalars we will just take in consideration the first element
         .reg1Out(scalar_reg1Out), .reg2Out(scalar_reg2Out)
     );
 
@@ -36,7 +36,7 @@ module regFile #(
     ) vectorialRegisters(
         .clk(clk), .reset(reset),
         .regWrEn(regWrEnVec), .rSel1(rSel1), .rSel2(rSel2), 
-        .regToWrite(regToWrite), .regWriteData(dataIn),
+        .regToWrite(regToWrite), .regWriteData(dataIn_mem),
         .reg1Out(vector_reg1Out), .reg2Out(vector_reg2Out)
     );
 
