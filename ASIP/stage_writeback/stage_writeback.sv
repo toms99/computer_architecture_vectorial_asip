@@ -5,11 +5,18 @@ module stage_writeback #(
    input clk, reset, writeEnable,
    input [1:0] writeRegFrom,
    input [registerSize-1:0] address, imm,
-   input [vecSize-1:0] [registerSize-1:0] writeData, aluResult,
+   input [vecSize-1:0] [registerSize-1:0] writeData, aluResult, 
    output [vecSize-1:0] [registerSize-1:0] writeBackData
 );
     
-    logic [vecSize-1:0] [registerSize-1:0] readData, extended_imm;
+    logic [vecSize-1:0] [registerSize-1:0] readData, extended_imm, imm_delayed, aluResult_delayed;
+	 logic [1:0] writeRegFrom_delayed;
+
+	 
+	 pipe_vect #(2, registerSize, vecSize) p_mem_chip(clk, rst, writeRegFrom, aluResult, extended_imm, 
+													writeRegFrom_delayed, aluResult_delayed, imm_delayed);
+	 
+	 
     data_memory #(
         .dataSize(registerSize),
         .addressingSize(registerSize),
@@ -26,9 +33,15 @@ module stage_writeback #(
     ) immExtender (
         .inData(imm), .outData(extended_imm)
     );
-
-    assign writeBackData = writeRegFrom == 0 ? readData :
-                    writeRegFrom == 1 ? aluResult:
-                    extended_imm;
+	  
+	  logic [vecSize-1:0] [registerSize-1:0] writeBackDataTMP;
+	 always_comb begin
+		case (writeRegFrom_delayed)
+			0: writeBackDataTMP = readData;
+			1: writeBackDataTMP = aluResult_delayed;
+			2: writeBackDataTMP = imm_delayed;
+		endcase
+	 end 
+	 assign writeBackData = writeBackDataTMP;
 
 endmodule
