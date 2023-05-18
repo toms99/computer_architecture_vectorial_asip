@@ -64,7 +64,7 @@ module processor #(
         .clk(clk), .reset(rst), .regWrEnSc(regWriteEnSc_chip),
         .regWrEnVec(regWriteEnVec_chip), .rSel1(instruction_d[11:8]),
         .rSel2(instruction_d[7:4]), .regToWrite(RegToWrite_chip),
-        .dataIn_mem(writeBackData_Mem), .dataIn_chip(writeBackData_Mem), .operand1(operand1_dec), .operand2(operand2_dec)
+        .dataIn(writeBackData_Mem), .operand1(operand1_dec), .operand2(operand2_dec)
     );
 	 
 	// Pipe De-EX
