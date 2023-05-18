@@ -28,7 +28,7 @@ module processor #(
 
 	//Matriz de ceros
 	// Inicializar la matriz a cero
-	logic [vectorSize-1:0] [registerSize-1:0] matrix_zero;
+	logic [vectorSize-1:0] [registerSize-1:0] matrix_zero, matrix_zero_b;
 	
 	
     // ####### FETCH STAGE #######
@@ -130,7 +130,7 @@ module processor #(
 	 // Pipe Mem-Chip
 	 logic [5:0] condensed_chip_in, condensed_chip_out;
 	 assign condensed_chip_in = {RegToWrite_Mem, regWriteEnVec_Mem, regWriteEnSc_Mem};
-	 pipe_vect #(6, registerSize, vectorSize) p_mem_chip(clk, rst, condensed_chip_in, writeBackData_Mem, matrix_zero, condensed_chip_out, writeBackData_chip, matrix_zero);
+	 pipe_vect #(6, registerSize, vectorSize) p_mem_chip(clk, rst, condensed_chip_in, writeBackData_Mem, matrix_zero_b, condensed_chip_out, writeBackData_chip, matrix_zero_b);
 
 	 assign {RegToWrite_chip, regWriteEnVec_chip, regWriteEnSc_chip} = condensed_chip_out;
 
