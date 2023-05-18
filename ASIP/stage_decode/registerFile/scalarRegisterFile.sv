@@ -20,8 +20,8 @@ module scalarRegisterFile #(
     generate
         genvar i;
         for (i = 0; i < registerQuantity; i = i + 1) begin: REGISTER_BLOCK
-            register #(registerSize) r (
-                .clk(clk & reg_N_WrEn[i] & regWrEn), .reset(reset),
+            register_en #(registerSize) r (
+                .clk(clk), .reset(reset), .enable(reg_N_WrEn[i] & regWrEn),
                 .data_in(dataIn), .data_out(reg_N_Out[i])
             );
         end
