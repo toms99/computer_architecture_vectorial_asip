@@ -19,8 +19,13 @@ module processor #(
 	logic [3:0] RegToWrite_Mem;
 	logic [registerSize-1:0] Immediate_Mem;
 	logic PCWrEn_Mem;
-   logic [vectorSize-1:0] [registerSize-1:0] writeBackData_Mem;
+   logic [vectorSize-1:0] [registerSize-1:0] writeBackData_Mem, writeBackData_chip;
 	
+	
+	// Variables que salen de Memory stage y entran de vuelta al chip
+	logic regWriteEnSc_chip, regWriteEnVec_chip;	
+	logic [3:0] RegToWrite_chip;
+
 	//Matriz de ceros
 	// Inicializar la matriz a cero
 	logic [vectorSize-1:0] [registerSize-1:0] matrix_zero;
@@ -56,10 +61,10 @@ module processor #(
         .registerSize(registerSize), .registerQuantity(registerQuantity),
         .selectionBits(selectionBits), .vectorSize(vectorSize)
     ) registerFile(
-        .clk(clk), .reset(rst), .regWrEnSc(regWriteEnSc_Mem),
-        .regWrEnVec(regWriteEnVec_Mem), .rSel1(instruction_d[11:8]),
-        .rSel2(instruction_d[7:4]), .regToWrite(RegToWrite_Mem),
-        .dataIn(writeBackData_Mem), .operand1(operand1_dec), .operand2(operand2_dec)
+        .clk(clk), .reset(rst), .regWrEnSc(regWriteEnSc_chip),
+        .regWrEnVec(regWriteEnVec_chip), .rSel1(instruction_d[11:8]),
+        .rSel2(instruction_d[7:4]), .regToWrite(RegToWrite_chip),
+        .dataIn(writeBackData_chip), .operand1(operand1_dec), .operand2(operand2_dec)
     );
 	 
 	// Pipe De-EX
@@ -119,4 +124,16 @@ module processor #(
         .imm(Immediate_Mem), .writeData(alu_result_mem),
         .aluResult(alu_result_mem), .writeBackData(writeBackData_Mem)
     );
+	 
+	 
+	 
+	 // Pipe Mem-Chip
+	 logic [5:0] condensed_chip_in, condensed_chip_out;
+	 assign condensed_chip_in = {RegToWrite_Mem, regWriteEnVec_Mem, regWriteEnSc_Mem};
+	 pipe_vect #(6, registerSize, vectorSize) p_mem_chip(clk, rst, condensed_chip_in, writeBackData_Mem, matrix_zero, condensed_chip_out, writeBackData_chip, matrix_zero);
+
+	 assign {RegToWrite_chip, regWriteEnVec_chip, regWriteEnSc_chip} = condensed_chip_out;
+
+	 
+	 
 endmodule
