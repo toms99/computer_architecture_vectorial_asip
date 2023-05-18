@@ -7,6 +7,9 @@ JMP inicio $ c
 JE branch $ 10
 JNE final $ 14
 
+LOPIX R1
+SVPIX R3
+
 branch:
 XOR R0 R4 $ dos operandos 18
 INC            $          1c
