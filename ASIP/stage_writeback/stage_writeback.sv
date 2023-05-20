@@ -4,23 +4,25 @@ module stage_writeback #(
 ) (
    input clk, reset, writeEnable, writeMemFrom,
    input [1:0] writeRegFrom,
-   input [registerSize-1:0] imm, alu_operand2,
-   input [vecSize-1:0] [registerSize-1:0] writeData, aluResult, 
+   input [registerSize-1:0] imm,
+   input [vecSize-1:0] [registerSize-1:0] aluResult, alu_operand2, alu_operand1,
    output [vecSize-1:0] [registerSize-1:0] writeBackData
 );
     
     logic [vecSize-1:0] [registerSize-1:0] readData, extended_imm, imm_delayed,
-        aluResult_delayed;
+        writeData_delayed, writeData, matrix_zero;
     logic [registerSize-1:0] address;
 	logic [1:0] writeRegFrom_delayed;
 
+	  // TODO: Does this alu_operand2 has to be delayed as well?
+    assign address = writeMemFrom ? alu_operand2[0] : imm;
+	 assign writeData = writeMemFrom ? alu_operand1 : aluResult;
 	 
-	pipe_vect #(2, registerSize, vecSize) p_mem_chip(clk, rst, writeRegFrom, aluResult, extended_imm, 
-													 writeRegFrom_delayed, aluResult_delayed, imm_delayed);
+	 
+	pipe_vect #(2, registerSize, vecSize) p_mem_chip(clk, rst, writeRegFrom, writeData, extended_imm, matrix_zero,
+													 writeRegFrom_delayed, writeData_delayed, imm_delayed, matrix_zero);
      
-    // TODO: Does this alu_operand2 has to be delayed as well?
-    assign address = writeMemFrom ? alu_operand2 : imm_delayed;
-	 
+
     data_memory #(
         .dataSize(registerSize),
         .addressingSize(registerSize),
@@ -42,7 +44,7 @@ module stage_writeback #(
 	 always_comb begin
 		case (writeRegFrom_delayed)
 			0: writeBackDataTMP = readData;
-			1: writeBackDataTMP = aluResult_delayed;
+			1: writeBackDataTMP = writeData_delayed;
 			2: writeBackDataTMP = imm_delayed;
 		endcase
 	 end 

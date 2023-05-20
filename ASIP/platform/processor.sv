@@ -28,7 +28,7 @@ module processor #(
 
 	//Matriz de ceros
 	// Inicializar la matriz a cero
-	logic [vectorSize-1:0] [registerSize-1:0] matrix_zero, matrix_zero_b;
+	logic [vectorSize-1:0] [registerSize-1:0] matrix_zero, matrix_zero_b, matrix_zero_c, matrix_zero_d, matrix_zero_e, matrix_zero_f;
 	
 	
     // ####### FETCH STAGE #######
@@ -75,13 +75,13 @@ module processor #(
                                   regWriteEnSc_dec, regWriteEnVec_dec,
                                   pcWrEn_dec, OverWriteNz_dec,
                                   AluOpCode_dec, writeMemFrom_Dec};
-	logic [vectorSize-1:0] [registerSize-1:0] operand1_ex, operand2_ex;
+	logic [vectorSize-1:0] [registerSize-1:0] operand1_ex, operand2_ex,operand1_mem, operand2_mem;
 
  	pipe_vect #(
         registerSize+17, registerSize, vectorSize
     ) p_decode_ex(
-        clk, rst, condensed_decode_in, operand1_dec, operand2_dec,
-        condensed_decode_out, operand1_ex, operand2_ex
+        clk, rst, condensed_decode_in, operand1_dec, operand2_dec, matrix_zero,
+        condensed_decode_out, operand1_ex, operand2_ex, matrix_zero
     );
 	
 	// Variables que entran al execute
@@ -94,8 +94,8 @@ module processor #(
 	assign {MemoryWrite_ex, writeRegFrom_ex,
             RegToWrite_ex, Immediate_ex,
             regWriteEnSc_ex, regWriteEnVec_ex,
-            pcWrEn_ex, OverWriteNz_ex, writeMemFrom_Ex,
-            AluOpCode_ex} = condensed_decode_out;
+            pcWrEn_ex, OverWriteNz_ex,
+            AluOpCode_ex, writeMemFrom_Ex} = condensed_decode_out;
 	
     // ######## EXECUTE STAGE ########
 	logic [vectorSize-1:0] [registerSize-1:0] result_ex, alu_result_mem;
@@ -112,7 +112,8 @@ module processor #(
 	 assign condensed_mem_in =  {MemoryWrite_ex, Immediate_ex, writeRegFrom_ex,
                                  RegToWrite_ex, pcWrEn_ex_out, regWriteEnSc_ex, 
                                  regWriteEnVec_ex, writeMemFrom_Ex};
-	 pipe_vect #(registerSize+11, registerSize, vectorSize) p_ex_mem(clk, rst, condensed_mem_in, result_ex, operand2_ex, condensed_mem_out, alu_result_mem, operand2_Mem);
+	 pipe_vect #(registerSize+11, registerSize, vectorSize) p_ex_mem(clk, rst, condensed_mem_in, result_ex, operand2_ex, operand1_ex, 
+																						condensed_mem_out, alu_result_mem, operand2_mem, operand1_mem);
 						
 	
     // ######## WRITE-BACK STAGE ########
@@ -122,9 +123,9 @@ module processor #(
     stage_writeback #(
         .vecSize(vectorSize), .registerSize(registerSize)
     ) writeback_stage (
-        .clk(clk), .reset(rst), .writeEnable(MemoryWrite_Mem), .alu_operand2(operand2_Mem),
+        .clk(clk), .reset(rst), .writeEnable(MemoryWrite_Mem), .alu_operand2(operand2_mem),
         .writeRegFrom(WriteRegFrom_Mem),
-        .imm(Immediate_Mem), .writeData(alu_result_mem), .writeMemFrom(writeMemFrom_Mem),
+        .imm(Immediate_Mem), .alu_operand1(operand1_mem), .writeMemFrom(writeMemFrom_Mem),
         .aluResult(alu_result_mem), .writeBackData(writeBackData_Mem)
     );
 	 
@@ -133,7 +134,8 @@ module processor #(
 	 // Pipe Mem-Chip
 	 logic [5:0] condensed_chip_in, condensed_chip_out;
 	 assign condensed_chip_in = {RegToWrite_Mem, regWriteEnVec_Mem, regWriteEnSc_Mem};
-	 pipe_vect #(6, registerSize, vectorSize) p_mem_chip(clk, rst, condensed_chip_in, writeBackData_Mem, matrix_zero_b, condensed_chip_out, writeBackData_chip, matrix_zero_b);
+	 pipe_vect #(6, registerSize, vectorSize) p_mem_chip(clk, rst, condensed_chip_in, writeBackData_Mem, matrix_zero_b, matrix_zero_c,
+																			condensed_chip_out, writeBackData_chip, matrix_zero_b, matrix_zero_c);
 
 	 assign {RegToWrite_chip, regWriteEnVec_chip, regWriteEnSc_chip} = condensed_chip_out;
 
