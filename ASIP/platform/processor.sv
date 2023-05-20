@@ -14,7 +14,7 @@ module processor #(
 	logic regWriteEnSc, regWriteEnVec, pcWrEn;
 	
 	// Variables que entran al Memory Stage
-	logic MemoryWrite_Mem, regWriteEnSc_Mem, regWriteEnVec_Mem;
+	logic MemoryWrite_Mem, regWriteEnSc_Mem, regWriteEnVec_Mem, writeMemFrom_Mem;
 	logic [1:0] WriteRegFrom_Mem; 
 	logic [3:0] RegToWrite_Mem;
 	logic [registerSize-1:0] Immediate_Mem;
@@ -43,7 +43,7 @@ module processor #(
     // ######## DECODE STAGE ########
     logic [2:0] pcWrEn_dec;
     logic OverWriteNz_dec, MemoryWrite_dec, regWriteEnSc_dec,
-          regWriteEnVec_dec;
+          regWriteEnVec_dec, writeMemFrom_Dec;
     logic [1:0] writeRegFrom_dec;
     logic [3:0] RegToWrite_dec;
     logic [registerSize-1:0] Immediate_dec;
@@ -54,7 +54,8 @@ module processor #(
         .WriteRegFrom(writeRegFrom_dec), .RegToWrite(RegToWrite_dec),
         .Immediate(Immediate_dec), .RegWriteEnSc(regWriteEnSc_dec),
         .RegWriteEnVec(regWriteEnVec_dec), .PcWriteEn(pcWrEn_dec),
-        .OverWriteNz(OverWriteNz_dec), .AluOpCode(AluOpCode_dec));
+        .OverWriteNz(OverWriteNz_dec), .AluOpCode(AluOpCode_dec),
+        .writeMemFrom(writeMemFrom_Dec));
 
     logic [vectorSize-1:0] [registerSize-1:0] operand1_dec, operand2_dec;
     regFile #(
@@ -68,23 +69,24 @@ module processor #(
     );
 	 
 	// Pipe De-EX
-	logic [registerSize-1+16:0] condensed_decode_in, condensed_decode_out;
+	logic [registerSize-1+17:0] condensed_decode_in, condensed_decode_out;
 	assign condensed_decode_in = {MemoryWrite_dec, writeRegFrom_dec,
                                   RegToWrite_dec, Immediate_dec,
                                   regWriteEnSc_dec, regWriteEnVec_dec,
                                   pcWrEn_dec, OverWriteNz_dec,
-                                  AluOpCode_dec};
+                                  AluOpCode_dec, writeMemFrom_Dec};
 	logic [vectorSize-1:0] [registerSize-1:0] operand1_ex, operand2_ex;
 
  	pipe_vect #(
-        registerSize+16, registerSize, vectorSize
+        registerSize+17, registerSize, vectorSize
     ) p_decode_ex(
         clk, rst, condensed_decode_in, operand1_dec, operand2_dec,
         condensed_decode_out, operand1_ex, operand2_ex
     );
 	
 	// Variables que entran al execute
-	logic MemoryWrite_ex, regWriteEnSc_ex, regWriteEnVec_ex, OverWriteNz_ex;
+	logic MemoryWrite_ex, regWriteEnSc_ex, regWriteEnVec_ex, OverWriteNz_ex,
+          writeMemFrom_Ex;
     logic [1:0] writeRegFrom_ex;
     logic [2:0] pcWrEn_ex, AluOpCode_ex;
     logic [3:0] RegToWrite_ex;
@@ -92,7 +94,7 @@ module processor #(
 	assign {MemoryWrite_ex, writeRegFrom_ex,
             RegToWrite_ex, Immediate_ex,
             regWriteEnSc_ex, regWriteEnVec_ex,
-            pcWrEn_ex, OverWriteNz_ex,
+            pcWrEn_ex, OverWriteNz_ex, writeMemFrom_Ex,
             AluOpCode_ex} = condensed_decode_out;
 	
     // ######## EXECUTE STAGE ########
@@ -106,22 +108,23 @@ module processor #(
     );
 	
 	 //Pipe Ex-Mem
-	 logic [registerSize-1+10:0] condensed_mem_in, condensed_mem_out;
+	 logic [registerSize-1+11:0] condensed_mem_in, condensed_mem_out;
 	 assign condensed_mem_in =  {MemoryWrite_ex, Immediate_ex, writeRegFrom_ex,
                                  RegToWrite_ex, pcWrEn_ex_out, regWriteEnSc_ex, 
-                                 regWriteEnVec_ex};
-	 pipe_vect #(registerSize+10, registerSize, vectorSize) p_ex_mem(clk, rst, condensed_mem_in, result_ex, matrix_zero, condensed_mem_out, alu_result_mem, matrix_zero);
+                                 regWriteEnVec_ex, writeMemFrom_Ex};
+	 pipe_vect #(registerSize+11, registerSize, vectorSize) p_ex_mem(clk, rst, condensed_mem_in, result_ex, operand2_ex, condensed_mem_out, alu_result_mem, operand2_Mem);
 						
 	
     // ######## WRITE-BACK STAGE ########
     assign {MemoryWrite_Mem, Immediate_Mem, WriteRegFrom_Mem, RegToWrite_Mem,
-				PCWrEn_Mem, regWriteEnSc_Mem, regWriteEnVec_Mem} = condensed_mem_out;
+			PCWrEn_Mem, regWriteEnSc_Mem, regWriteEnVec_Mem,
+            writeMemFrom_Mem} = condensed_mem_out;
     stage_writeback #(
         .vecSize(vectorSize), .registerSize(registerSize)
     ) writeback_stage (
-        .clk(clk), .reset(rst), .writeEnable(MemoryWrite_Mem),
-        .writeRegFrom(WriteRegFrom_Mem), .address(Immediate_Mem),
-        .imm(Immediate_Mem), .writeData(alu_result_mem),
+        .clk(clk), .reset(rst), .writeEnable(MemoryWrite_Mem), .alu_operand2(operand2_Mem),
+        .writeRegFrom(WriteRegFrom_Mem),
+        .imm(Immediate_Mem), .writeData(alu_result_mem), .writeMemFrom(writeMemFrom_Mem),
         .aluResult(alu_result_mem), .writeBackData(writeBackData_Mem)
     );
 	 

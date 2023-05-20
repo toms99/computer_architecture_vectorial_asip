@@ -38,7 +38,7 @@ module decoderStage #(parameter N=16)
     assign RegToWrite = instruction[11:8];
 
 	assign Immediate = instruction[7:0];
-    assign writeMemFrom = memoryInstruction && instruction[13];
+    assign writeMemFrom = memoryInstruction && ~instruction[13];
 
     assign regWriteEn = (memoryInstruction && instruction[12]) | ~instruction[15];
     assign RegWriteEnSc = regWriteEn & (instruction[10] || instruction[11]);
