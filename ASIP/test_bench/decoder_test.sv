@@ -5,6 +5,7 @@ module decoder_test();
     logic [1:0] WriteRegFrom;
     logic [3:0] RegToWrite;
     logic [7:0] Immediate;
+    logic writeMemFrom;
     logic RegWriteEnSc;
     logic RegWriteEnVec;
     logic OverWriteNz;
@@ -16,6 +17,7 @@ module decoder_test();
                     .WriteRegFrom(WriteRegFrom),
                     .RegToWrite(RegToWrite),
                     .Immediate(Immediate),
+                    .writeMemFrom(writeMemFrom),
                     .RegWriteEnSc(RegWriteEnSc),
                     .RegWriteEnVec(RegWriteEnVec),
                     .PcWriteEn(PcWriteEn),
@@ -37,6 +39,7 @@ module decoder_test();
         assert (Immediate == 16) else $error("Test 1: Immediate should be 16");
         assert (RegWriteEnSc == 1) else $error("Test 1: RegWriteEnSc should be 1");
         assert (RegWriteEnVec == 0) else $error("Test 1: RegWriteEnVec should be 0");
+        assert (writeMemFrom == 0) else $error("Test 1: writeMemFrom should be 0");
         #10;
 
         // 2: losc
@@ -50,6 +53,7 @@ module decoder_test();
         assert (Immediate == 18) else $error("Test 2: Immediate should be 18");
         assert (RegWriteEnSc == 1) else $error("Test 2: RegWriteEnSc should be 1");
         assert (RegWriteEnVec == 0) else $error("Test 2: RegWriteEnVec should be 0");
+        assert (writeMemFrom == 0) else $error("Test 2: writeMemFrom should be 0");
         #10;
 
         // 3: dcae (sub)
@@ -63,6 +67,7 @@ module decoder_test();
         assert (RegToWrite == 2) else $error("Test 3: RegToWrite should be 2");
         assert (RegWriteEnSc == 0) else $error("Test 3: RegWriteEnSc should be 0");
         assert (RegWriteEnVec == 1) else $error("Test 3: RegWriteEnVec should be 1");
+        assert (writeMemFrom == 0) else $error("Test 3: writeMemFrom should be 0");
         #10;
 
         // 4: jmp
@@ -74,6 +79,7 @@ module decoder_test();
         assert (Immediate == 21) else $error("Test 4: Immediate should be 21");
         assert (RegWriteEnSc == 0) else $error("Test 4: RegWriteEnSc should be 0");
         assert (RegWriteEnVec == 0) else $error("Test 4: RegWriteEnVec should be 0");
+        assert (writeMemFrom == 0) else $error("Test 4: writeMemFrom should be 0");
         
         // 5: je
         #10;
@@ -85,6 +91,7 @@ module decoder_test();
         assert (Immediate == 16) else $error("Test 5: Immediate should be 16");
         assert (RegWriteEnSc == 0) else $error("Test 5: RegWriteEnSc should be 0");
         assert (RegWriteEnVec == 0) else $error("Test 5: RegWriteEnVec should be 0");
+        assert (writeMemFrom == 0) else $error("Test 5: writeMemFrom should be 0");
 
         // 6: jne
         #10;
@@ -96,6 +103,7 @@ module decoder_test();
         assert (Immediate == 50) else $error("Test 6: Immediate should be 50");
         assert (RegWriteEnSc == 0) else $error("Test 6: RegWriteEnSc should be 0");
         assert (RegWriteEnVec == 0) else $error("Test 6: RegWriteEnVec should be 0");
+        assert (writeMemFrom == 0) else $error("Test 6: writeMemFrom should be 0");
 
         // Aritmeticas
         //7: xor
@@ -110,6 +118,7 @@ module decoder_test();
         assert (RegToWrite == 3) else $error("Test 7: RegToWrite should be 3");
         assert (RegWriteEnSc == 0) else $error("Test 7: RegWriteEnSc should be 0");
         assert (RegWriteEnVec == 1) else $error("Test 7: RegWriteEnVec should be 1");
+        assert (writeMemFrom == 0) else $error("Test 7: writeMemFrom should be 0");
         #10;
 
         // 8: ecae (add)
@@ -124,6 +133,7 @@ module decoder_test();
         assert (RegToWrite == 1) else $error("Test 8: RegToWrite should be 1");
         assert (RegWriteEnSc == 0) else $error("Test 8: RegWriteEnSc should be 0");
         assert (RegWriteEnVec == 1) else $error("Test 8: RegWriteEnVec should be 1");
+        assert (writeMemFrom == 0) else $error("Test 8: writeMemFrom should be 0");
         #10;
 
         // 9: mul
@@ -137,67 +147,73 @@ module decoder_test();
         assert (RegToWrite == 3) else $error("Test 9: RegToWrite should be 3");
         assert (RegWriteEnSc == 0) else $error("Test 9: RegWriteEnSc should be 0");
         assert (RegWriteEnVec == 1) else $error("Test 9: RegWriteEnVec should be 1");
+        assert (writeMemFrom == 0) else $error("Test 9: writeMemFrom should be 0");
         #10;
 
         // 10: rshf
         instruction = 16'h5160;
         #10;
-        assert (PcWriteEn == 0) else $error("Test 9: PcWriteEn should be 0");
-        assert (MemoryWrite == 0) else $error("Test 9: MemoryWrite should be 0");
-        assert (AluOpCode == 5) else $error("Test 9: AluOpCode should be 5");
-        assert (WriteRegFrom == 1) else $error("Test 9: WriteRegFrom should be 1");
-        assert (OverWriteNz == 1) else $error("Test 9: OverWriteNz should be 1");
-        assert (RegToWrite == 1) else $error("Test 9: RegToWrite should be 1");
-        assert (RegWriteEnSc == 0) else $error("Test 9: RegWriteEnSc should be 0");
-        assert (RegWriteEnVec == 1) else $error("Test 9: RegWriteEnVec should be 1");
+        assert (PcWriteEn == 0) else $error("Test 10: PcWriteEn should be 0");
+        assert (MemoryWrite == 0) else $error("Test 10: MemoryWrite should be 0");
+        assert (AluOpCode == 5) else $error("Test 10: AluOpCode should be 5");
+        assert (WriteRegFrom == 1) else $error("Test 10: WriteRegFrom should be 1");
+        assert (OverWriteNz == 1) else $error("Test 10: OverWriteNz should be 1");
+        assert (RegToWrite == 1) else $error("Test 10: RegToWrite should be 1");
+        assert (RegWriteEnSc == 0) else $error("Test 10: RegWriteEnSc should be 0");
+        assert (RegWriteEnVec == 1) else $error("Test 10: RegWriteEnVec should be 1");
+        assert (writeMemFrom == 0) else $error("Test 10: writeMemFrom should be 0");
         #10;
 
         // 11: lshf
         instruction = 16'h6250;
         #10;
-        assert (PcWriteEn == 0) else $error("Test 9: PcWriteEn should be 0");
-        assert (MemoryWrite == 0) else $error("Test 9: MemoryWrite should be 0");
-        assert (AluOpCode == 6) else $error("Test 9: AluOpCode should be 6");
-        assert (WriteRegFrom == 1) else $error("Test 9: WriteRegFrom should be 1");
-        assert (OverWriteNz == 1) else $error("Test 9: OverWriteNz should be 1");
-        assert (RegToWrite == 2) else $error("Test 9: RegToWrite should be 2");
-        assert (RegWriteEnSc == 0) else $error("Test 9: RegWriteEnSc should be 0");
-        assert (RegWriteEnVec == 1) else $error("Test 9: RegWriteEnVec should be 1");
+        assert (PcWriteEn == 0) else $error("Test 11: PcWriteEn should be 0");
+        assert (MemoryWrite == 0) else $error("Test 11: MemoryWrite should be 0");
+        assert (AluOpCode == 6) else $error("Test 11: AluOpCode should be 6");
+        assert (WriteRegFrom == 1) else $error("Test 11: WriteRegFrom should be 1");
+        assert (OverWriteNz == 1) else $error("Test 11: OverWriteNz should be 1");
+        assert (RegToWrite == 2) else $error("Test 11: RegToWrite should be 2");
+        assert (RegWriteEnSc == 0) else $error("Test 11: RegWriteEnSc should be 0");
+        assert (RegWriteEnVec == 1) else $error("Test 11: RegWriteEnVec should be 1");
+        assert (writeMemFrom == 0) else $error("Test 11: writeMemFrom should be 0");
         #10;
 
         // 12: inc
         instruction = 16'h7E00;
         #10;
-        assert (PcWriteEn == 0) else $error("Test 9: PcWriteEn should be 0");
-        assert (MemoryWrite == 0) else $error("Test 9: MemoryWrite should be 0");
-        assert (AluOpCode == 7) else $error("Test 9: AluOpCode should be 7");
-        assert (WriteRegFrom == 1) else $error("Test 9: WriteRegFrom should be 1");
-        assert (OverWriteNz == 1) else $error("Test 9: OverWriteNz should be 1");
-        assert (RegToWrite == 14) else $error("Test 9: RegToWrite should be 14");
-        assert (RegWriteEnSc == 1) else $error("Test 9: RegWriteEnSc should be 1");
-        assert (RegWriteEnVec == 0) else $error("Test 9: RegWriteEnVec should be 0");
+        assert (PcWriteEn == 0) else $error("Test 12: PcWriteEn should be 0");
+        assert (MemoryWrite == 0) else $error("Test 12: MemoryWrite should be 0");
+        assert (AluOpCode == 7) else $error("Test 12: AluOpCode should be 7");
+        assert (WriteRegFrom == 1) else $error("Test 12: WriteRegFrom should be 1");
+        assert (OverWriteNz == 1) else $error("Test 12: OverWriteNz should be 1");
+        assert (RegToWrite == 14) else $error("Test 12: RegToWrite should be 14");
+        assert (RegWriteEnSc == 1) else $error("Test 12: RegWriteEnSc should be 1");
+        assert (RegWriteEnVec == 0) else $error("Test 12: RegWriteEnVec should be 0");
+        assert (writeMemFrom == 0) else $error("Test 12: writeMemFrom should be 0");
         #10;
 
         // 13: lopix
         instruction = 16'hD200;
         #10;
-        assert (PcWriteEn == 0) else $error("Test 9: PcWriteEn should be 0");
-        assert (MemoryWrite == 0) else $error("Test 9: MemoryWrite should be 0");
-        assert (WriteRegFrom == 0) else $error("Test 9: WriteRegFrom should be 0");
-        assert (OverWriteNz == 0) else $error("Test 9: OverWriteNz should be 0");
-        assert (RegToWrite == 2) else $error("Test 9: RegToWrite should be 2");
-        assert (RegWriteEnSc == 0) else $error("Test 9: RegWriteEnSc should be 0");
-        assert (RegWriteEnVec == 1) else $error("Test 9: RegWriteEnVec should be 1");
+        assert (PcWriteEn == 0) else $error("Test 13: PcWriteEn should be 0");
+        assert (MemoryWrite == 0) else $error("Test 13: MemoryWrite should be 0");
+        assert (WriteRegFrom == 0) else $error("Test 13: WriteRegFrom should be 0");
+        assert (OverWriteNz == 0) else $error("Test 13: OverWriteNz should be 0");
+        assert (RegToWrite == 2) else $error("Test 13: RegToWrite should be 2");
+        assert (RegWriteEnSc == 0) else $error("Test 13: RegWriteEnSc should be 0");
+        assert (RegWriteEnVec == 1) else $error("Test 13: RegWriteEnVec should be 1");
+        assert (writeMemFrom == 1) else $error("Test 13: writeMemFrom should be 1");
         #10;
 
         //14: svpix
         instruction = 16'hC300;
         #10;
-        assert (PcWriteEn == 0) else $error("Test 9: PcWriteEn should be 0");
-        assert (MemoryWrite == 1) else $error("Test 9: MemoryWrite should be 1");
-        assert (OverWriteNz == 0) else $error("Test 9: OverWriteNz should be 0");
-        assert (RegWriteEnSc == 0) else $error("Test 9: RegWriteEnSc should be 0");
-        assert (RegWriteEnVec == 0) else $error("Test 9: RegWriteEnVec should be 0");
+        assert (PcWriteEn == 0) else $error("Test 14: PcWriteEn should be 0");
+        assert (MemoryWrite == 1) else $error("Test 14: MemoryWrite should be 1");
+        assert (OverWriteNz == 0) else $error("Test 14: OverWriteNz should be 0");
+        assert (RegWriteEnSc == 0) else $error("Test 14: RegWriteEnSc should be 0");
+        assert (RegWriteEnVec == 0) else $error("Test 14: RegWriteEnVec should be 0");
+        assert (writeMemFrom == 1) else $error("Test 14: writeMemFrom should be 1");
 
         #20;
         $finish;
