@@ -4,6 +4,7 @@ module decoderStage #(parameter N=16)
 						output logic [1:0] WriteRegFrom, //Bandera que indica de donde viene lo que vamos a escribir en el registro (memoria, imm, ALU)
 						output logic [3:0] RegToWrite,
 						output logic [7:0] Immediate,
+                        output logic writeMemFrom,
 						output logic RegWriteEnSc,
 						output logic RegWriteEnVec,
                         output logic [2:0] PcWriteEn,
@@ -37,6 +38,7 @@ module decoderStage #(parameter N=16)
     assign RegToWrite = instruction[11:8];
 
 	assign Immediate = instruction[7:0];
+    assign writeMemFrom = memoryInstruction && instruction[13];
 
     assign regWriteEn = (memoryInstruction && instruction[12]) | ~instruction[15];
     assign RegWriteEnSc = regWriteEn & (instruction[10] || instruction[11]);

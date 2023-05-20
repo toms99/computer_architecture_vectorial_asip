@@ -3,14 +3,14 @@ module stage_writeback_test #(
     parameter registerSize = 8
 ) ();
 
-    logic clk, reset, writeEnable;
+    logic clk, reset, writeEnable, writeMemFrom;
     logic [1:0] writeRegFrom;
-    logic [registerSize-1:0] address, imm;
+    logic [registerSize-1:0] address, imm, alu_operand2;
     logic [vecSize-1:0] [registerSize-1:0] writeData, aluResult, writeBackData;
 
     stage_writeback #(vecSize, registerSize) writeback (
-        .clk(clk), .reset(reset), .writeEnable(writeEnable),
-        .writeRegFrom(writeRegFrom), .address(address), .imm(imm),
+        .clk(clk), .reset(reset), .writeEnable(writeEnable), .alu_operand2(alu_operand2),
+        .writeRegFrom(writeRegFrom), .imm(imm), .writeMemFrom(writeMemFrom),
         .writeData(writeData), .aluResult(aluResult), .writeBackData(writeBackData)
     );
 
@@ -25,6 +25,7 @@ module stage_writeback_test #(
         imm = 0;
         writeData = 0;
         aluResult = 0;
+        writeMemFrom = 0;
         // Tests:
         // 1. Read Address 0
         // -> Should be 0
@@ -58,7 +59,20 @@ module stage_writeback_test #(
         writeRegFrom = 1;
         #10
         assert (writeBackData == 32'hCAFEBABE) else $error("Test 4 failed: Reading an aluResult");
+        #10;
+        // 4. Write to address on reg, read address on reg
+        // -> Should be the same
+        writeMemFrom = 1;
+        writeRegFrom = 0;
+        alu_operand2 = 8;
+        writeEnable = 1;
+        writeData = 32'hBEEFBEEF;
+        #10;
+        writeEnable = 0;
+        #10;
+        assert(writeBackData == 32'hBEEFBEEF) else $error("Test 5 failed: Writing and reading on register address");
         #20;
+        $finish;
     end
 
 endmodule

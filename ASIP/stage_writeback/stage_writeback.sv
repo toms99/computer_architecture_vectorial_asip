@@ -2,20 +2,24 @@ module stage_writeback #(
     parameter vecSize = 4,
     parameter registerSize = 8
 ) (
-   input clk, reset, writeEnable,
+   input clk, reset, writeEnable, writeMemFrom,
    input [1:0] writeRegFrom,
-   input [registerSize-1:0] address, imm,
+   input [registerSize-1:0] imm, alu_operand2,
    input [vecSize-1:0] [registerSize-1:0] writeData, aluResult, 
    output [vecSize-1:0] [registerSize-1:0] writeBackData
 );
     
-    logic [vecSize-1:0] [registerSize-1:0] readData, extended_imm, imm_delayed, aluResult_delayed;
-	 logic [1:0] writeRegFrom_delayed;
+    logic [vecSize-1:0] [registerSize-1:0] readData, extended_imm, imm_delayed,
+        aluResult_delayed;
+    logic [registerSize-1:0] address;
+	logic [1:0] writeRegFrom_delayed;
 
 	 
-	 pipe_vect #(2, registerSize, vecSize) p_mem_chip(clk, rst, writeRegFrom, aluResult, extended_imm, 
-													writeRegFrom_delayed, aluResult_delayed, imm_delayed);
-	 
+	pipe_vect #(2, registerSize, vecSize) p_mem_chip(clk, rst, writeRegFrom, aluResult, extended_imm, 
+													 writeRegFrom_delayed, aluResult_delayed, imm_delayed);
+     
+    // TODO: Does this alu_operand2 has to be delayed as well?
+    assign address = writeMemFrom ? alu_operand2 : imm_delayed;
 	 
     data_memory #(
         .dataSize(registerSize),
