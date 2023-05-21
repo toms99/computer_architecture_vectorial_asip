@@ -188,13 +188,9 @@ def add_stalls(list):
         stalls_counter = 0
         result.append(item)
         if ":" not in item[0]:
-            print(item)
             while stalls_counter <= 4:
                 result.append(["STALL"])
                 stalls_counter += 1
-    print("______________________________")
-    for item in result:
-        print(item)
     return result
 
 
@@ -234,7 +230,7 @@ def compile_jumps(instruction):
     return f"{command_opcode}0000{branch_dir}"
 
 
-# "INC", "LOPIX", "SVPIX"
+# "LOPIX", "SVPIX"
 def compile_one_op(instruction):
     global register_dict, op_code_dict, vectorial_regs
     command = instruction[0]
@@ -245,7 +241,7 @@ def compile_one_op(instruction):
         raise Exception(f"Registro {register} inválido en la instrucción {instruction}")
     else:
         register_code = register_dict[register]
-        return f"{command_opcode}{register_code}00000000"
+        return f"{command_opcode}{register_code}11100000"
 
 
 def get_binary_from_hexa_dec(string):
@@ -253,6 +249,10 @@ def get_binary_from_hexa_dec(string):
         valor_hex = string[2:]
         try:
             decimal = int(valor_hex, 16)
+            if not 0 <= decimal <= 255:
+                raise Exception(
+                    f"Error: Valor hexadecimal fuera de rango (0-FF): {string}"
+                )
             binario = bin(decimal)[2:].zfill(8)
             return binario
         except ValueError:
@@ -361,7 +361,7 @@ def compile_instructions(instruction_matrix):
                 if instruction_list[0] in one_operand_instructions[:3]:
                     compiled_instruction = compile_jumps(instruction_list)
 
-                # Si es una de las siguientes instrucciones: "INC", "LOPIX", "SVPIX"
+                # Si es una de las siguientes instrucciones: "LOPIX", "SVPIX"
                 else:
                     compiled_instruction = compile_one_op(instruction_list)
 
