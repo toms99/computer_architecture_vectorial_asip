@@ -63,6 +63,8 @@ two_operand_instructions = [
 ]
 
 
+stall = "0000100000000000"
+
 # Funciones
 
 
@@ -180,13 +182,29 @@ def remove_empty_lines(list):
     return result
 
 
+def add_stalls(list):
+    result = []
+    for item in list:
+        stalls_counter = 0
+        result.append(item)
+        if ":" not in item[0]:
+            print(item)
+            while stalls_counter <= 4:
+                result.append(["STALL"])
+                stalls_counter += 1
+    print("______________________________")
+    for item in result:
+        print(item)
+    return result
+
+
 def fill_branch_dict(instruction_matrix):
     instruction_counter = 0
     # devolverá la listas sin las instrucciones de branch
     result = []
     for instruction_list in instruction_matrix:
         if len(instruction_list) == 1:
-            if instruction_list[0] == "INC":
+            if instruction_list[0] in ["INC", "STALL"]:
                 result.append(instruction_list)
                 instruction_counter += 1
             elif ":" in instruction_list[0]:
@@ -311,10 +329,15 @@ def save_results(results, file_name):
 def compile_instructions(instruction_matrix):
     # reformat list. elimina lineas vacias
     instruction_matrix = remove_empty_lines(instruction_matrix)
+
+    # Añade los stalls necesarios
+    instruction_matrix = add_stalls(instruction_matrix)
+    # print(instruction_matrix)
+
     # Popula el diccionario de branches y elimina las instrucciones de branching
     instruction_matrix = fill_branch_dict(instruction_matrix)
 
-    compiled_instructios_result = []
+    compiled_instructios_result = [stall]
     compiled_instructions_counter = 0
     line_counter = 1
 
@@ -327,7 +350,8 @@ def compile_instructions(instruction_matrix):
             if instruction_list[0] == "INC":
                 command_opcode = op_code_dict["INC"]
                 compiled_instruction = f"{command_opcode}111000000000"
-
+            elif instruction_list[0] == "STALL":
+                compiled_instruction = stall
             else:
                 raise Exception(f"Instrucción inválida en la linea {line_counter}")
         # Comprueba instrucciones de dos operandos
