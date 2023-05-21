@@ -20,10 +20,12 @@ module decoderStage #(parameter N=16)
     // Outputs
 
     assign PcWriteEn = {
-        instruction[15] && ~instruction[14] && instruction[13] && ~instruction[12],
+        instruction[15] && ~instruction[14] && ~instruction[13] && instruction[12],
         instruction[15] && ~instruction[14] && ~instruction[13] && ~instruction[12],
-        instruction[15] && ~instruction[14] && ~instruction[13] && instruction[12]
+        instruction[15] && instruction[14] && instruction[13] && instruction[12]
     };
+	 
+
 
     assign MemoryWrite = memoryInstruction && ~instruction[13] && ~instruction[12];
 
