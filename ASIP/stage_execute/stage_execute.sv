@@ -37,7 +37,7 @@ module stage_execute #(
         .data_in(&zeroFlags), .data_out(NZ_flags[1])
     );
 
-    assign pcWrEn_out = pcWrEn == 3'b100 ? 3'b1 :
+    assign pcWrEn_out = pcWrEn == 3'b100 ? ~NZ_flags[1] :
                         pcWrEn == 3'b010 ? NZ_flags[1] :
                         pcWrEn == 3'b001 ? NZ_flags[0] :
                         0;
