@@ -63,7 +63,8 @@ two_operand_instructions = [
 ]
 
 
-stall = "0000100000000000"
+stall = "000010000000000000000000"
+inc = "011111100000000000000000"
 
 # Funciones
 
@@ -160,7 +161,7 @@ def calc_binary_from_counter(compiled_instructions_counter):
     result_decimal = compiled_instructions_counter * 4
 
     # Convertir el resultado a formato binario de 8 bits
-    result_binario = bin(result_decimal & 0xFF)[2:].zfill(8)
+    result_binario = bin(result_decimal & 0xFF)[2:].zfill(16)
 
     return result_binario
 
@@ -241,7 +242,7 @@ def compile_one_op(instruction):
         raise Exception(f"Registro {register} inválido en la instrucción {instruction}")
     else:
         register_code = register_dict[register]
-        return f"{command_opcode}{register_code}11100000"
+        return f"{command_opcode}{register_code}1110000000000000"
 
 
 def get_binary_from_hexa_dec(string):
@@ -253,7 +254,7 @@ def get_binary_from_hexa_dec(string):
                 raise Exception(
                     f"Error: Valor hexadecimal fuera de rango (0-FF): {string}"
                 )
-            binario = bin(decimal)[2:].zfill(8)
+            binario = bin(decimal)[2:].zfill(16)
             return binario
         except ValueError:
             raise Exception(f"Error: Valor hexadecimal inválido: {string}")
@@ -263,7 +264,7 @@ def get_binary_from_hexa_dec(string):
         try:
             decimal = int(valor_dec)
             if 0 <= decimal <= 255:
-                binario = bin(decimal)[2:].zfill(8)
+                binario = bin(decimal)[2:].zfill(16)
                 return binario
             else:
                 raise Exception(
@@ -311,7 +312,7 @@ def compile_two_regs_inst(instruction):
     else:
         r1_code = register_dict[r1]
         r2_code = register_dict[r2]
-        return f"{command_opcode}{r1_code}{r2_code}0000"
+        return f"{command_opcode}{r1_code}{r2_code}000000000000"
 
 
 def save_results(results, file_name):
@@ -348,8 +349,7 @@ def compile_instructions(instruction_matrix):
         # Comprueba instrucciones de un operando. Solamente INC. Las branchs ya han sido procesadas
         if instruction_length == 1:
             if instruction_list[0] == "INC":
-                command_opcode = op_code_dict["INC"]
-                compiled_instruction = f"{command_opcode}111000000000"
+                compiled_instruction = inc
             elif instruction_list[0] == "STALL":
                 compiled_instruction = stall
             else:
