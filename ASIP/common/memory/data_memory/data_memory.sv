@@ -1,7 +1,7 @@
 module data_memory #(
     parameter dataSize = 32,
     parameter addressingSize = 32,
-    parameter memorySize = 704,
+    parameter memorySize = 65534,
     parameter vecSize = 4
 ) (
     input logic clk, write_enable,
