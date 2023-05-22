@@ -327,6 +327,21 @@ def save_results(results, file_name):
         print("Error al guardar la lista en el archivo.")
 
 
+def binary_to_hex(binary):
+    # Convertir el número binario a hexadecimal
+    hexadecimal = format(int(binary, 2), "06X")
+
+    return hexadecimal
+
+
+def list_binary_to_hex(list):
+    result = []
+    for item in list:
+        hexa = binary_to_hex(item)
+        result.append(hexa)
+    return result
+
+
 def compile_instructions(instruction_matrix):
     # reformat list. elimina lineas vacias
     instruction_matrix = remove_empty_lines(instruction_matrix)
@@ -414,6 +429,9 @@ def main():
 
     # Compila las instrucciones
     compiled_instructions = compile_instructions(instruction_matrix)
+
+    # De binario a hexa
+    compiled_instructions = list_binary_to_hex(compiled_instructions)
 
     save_results(compiled_instructions, "results.txt")
 
