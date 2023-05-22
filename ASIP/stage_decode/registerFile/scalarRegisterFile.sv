@@ -1,6 +1,6 @@
 // Register Quantity has to be a power of 2
 module scalarRegisterFile #(
-    parameter registerSize=8, 
+    parameter registerSize=16, 
     parameter registerQuantity=4,
     parameter selectionBits=2
 ) (

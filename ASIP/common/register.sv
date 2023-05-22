@@ -1,6 +1,6 @@
 module register #
 (
-    parameter N = 8 // default register size is 8
+    parameter N = 16 // default register size is 8
 )
 (
     input clk,

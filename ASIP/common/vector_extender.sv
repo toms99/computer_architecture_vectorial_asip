@@ -1,4 +1,4 @@
-module vector_extender #(parameter vectorSize = 4, parameter dataSize = 8) (
+module vector_extender #(parameter vectorSize = 4, parameter dataSize = 16) (
     input [dataSize-1:0] inData,
     output [vectorSize-1:0] [dataSize-1:0] outData
 );

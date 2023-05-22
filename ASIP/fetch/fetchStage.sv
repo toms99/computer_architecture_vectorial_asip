@@ -1,10 +1,12 @@
-module fetchStage(
+module fetchStage #(
+	 parameter instructionSize = 24)
+	 (
     input logic clk, input logic reset, input logic pcWrEn,
-    input logic [7:0] newPc,
-    output logic [15:0] instruction
-);
+    input logic [instructionSize - 9:0] newPc,
+    output logic [instructionSize - 1:0] instruction
+	);
 
-    logic [7:0] pcM4, chosePc, pc;
+    logic [instructionSize - 9:0] pcM4, chosePc, pc;
 
     register pcReg(		//PC register
         .clk(clk),

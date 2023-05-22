@@ -1,5 +1,5 @@
 module vecRegisterFile #(
-    parameter registerSize = 8,
+    parameter registerSize = 16,
     parameter registerQuantity = 4,
     parameter selectionBits = 2,
     parameter vectorSize = 4

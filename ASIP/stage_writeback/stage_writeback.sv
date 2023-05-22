@@ -1,6 +1,6 @@
 module stage_writeback #(
     parameter vecSize = 4,
-    parameter registerSize = 8
+    parameter registerSize = 16
 ) (
    input clk, reset, writeEnable, writeMemFrom,
    input [1:0] writeRegFrom,

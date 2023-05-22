@@ -1,7 +1,7 @@
 module regFile #(
-    parameter registerSize = 8,
+    parameter registerSize = 16,
     parameter registerQuantity = 4,
-    parameter selectionBits = 4, // 3 for 8 registers, 2 for 4 registers, and so on
+    parameter selectionBits = 2, // 3 for 8 registers, 2 for 4 registers, and so on
     parameter vectorSize = 4)
 (
     input clk, reset,
@@ -17,7 +17,7 @@ module regFile #(
     logic [vectorSize-1:0] [registerSize-1:0] vector_reg1Out, vector_reg2Out;
     logic [vectorSize-1:0] [registerSize-1:0] vectorized_scalar_reg1Out, vectorized_scalar_reg2Out;
 
-    scalarRegisterFile #(registerSize, 16, selectionBits) scalarRegisters(
+    scalarRegisterFile #(registerSize, 24, selectionBits) scalarRegisters(
         .clk(clk), .reset(reset),
         .regWrEn(regWrEnSc), .rSel1(rSel1), .rSel2(rSel2),
         .regToWrite(regToWrite), .dataIn(dataIn[0]), // For scalars we will just take in consideration the first element

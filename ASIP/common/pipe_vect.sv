@@ -1,5 +1,5 @@
 module pipe_vect #(parameter WIDTH = 8,
-				  parameter registerSize = 8,
+				  parameter registerSize = 16,
 				  parameter vectorSize = 4)
 			  ( input logic 	         clk, reset,
 			    input logic  [WIDTH-1:0] in,

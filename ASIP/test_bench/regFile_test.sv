@@ -1,6 +1,6 @@
 `timescale 1ps / 1ps
 module regFile_test #(
-    parameter registerSize = 8,
+    parameter registerSize = 16,
     parameter registerQuantity = 4,
     parameter selectionBits = 4,
     parameter vectorSize = 4

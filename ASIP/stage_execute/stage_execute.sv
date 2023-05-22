@@ -1,5 +1,5 @@
 module stage_execute #(
-	parameter registerSize = 8,
+	parameter registerSize = 16,
 	parameter vectorSize = 4
 )
 (
