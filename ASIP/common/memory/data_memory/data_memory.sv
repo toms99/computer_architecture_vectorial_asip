@@ -12,24 +12,27 @@ module data_memory #(
     parameter bytes_in_addr = dataSize / 8;
     parameter bits_to_address_bytes_in_addr = $clog2(bytes_in_addr);
 
-    logic [dataSize-1:0] RAM [memorySize-1:0];
+    logic [7:0] RAM [memorySize-1:0];
 	initial begin
 		$readmemh("RAM.txt", RAM);
-		/*for (int i = 0; i < memorySize ; i++) begin
-			RAM[i] = 'b0;
-		end*/
 	end
     
     always_ff @(posedge clk) begin
         if (write_enable) begin 
-            for (int i = 0; i < vecSize; i = i + 1)
-                RAM[DataAdr[addressingSize-1:bits_to_address_bytes_in_addr] +
-                    i * bytes_in_addr] <= toWrite_data[i];
+            for (int i = 0; i < vecSize; i = i + 1) begin
+                for (int j = 0; j < bytes_in_addr; j = j + 1)
+                    RAM[DataAdr[addressingSize-1:bits_to_address_bytes_in_addr] +
+                        i * bytes_in_addr + j] <=
+                        toWrite_data[i][j*8 +: 8];
+            end
         end else begin 
-            for (int i = 0; i < vecSize; i = i + 1)
-                read_data[i] <= 
-                    RAM[DataAdr[addressingSize-1:
-                                bits_to_address_bytes_in_addr] + i * bytes_in_addr];
+            for (int i = 0; i < vecSize; i = i + 1) begin
+                for (int j = 0; j < bytes_in_addr; j = j + 1)
+                    read_data[i][j*8 +: 8] <= 
+                        RAM[DataAdr[addressingSize-1:
+                                    bits_to_address_bytes_in_addr] + 
+                                    i * bytes_in_addr + j];
+            end
         end
     end
 	 
