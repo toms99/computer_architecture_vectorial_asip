@@ -1,10 +1,16 @@
-module chargenrom( input logic [9:0] x, y, input logic inrect, output logic [7:0] pixel);
+module chargenrom( input logic [9:0] x, y, input logic inrect, clk, output logic [7:0] pixel);
 
 		logic [7:0] charrom[9999:0]; // character generator ROM
 
 		// Initialize ROM with characters from text file
-		initial
+		initial begin
 		$readmemb("../common/memory/data_memory/RAM.txt", charrom);
+		
+		end
+		
+		always_ff @(posedge clk) begin
+		$readmemb("../common/memory/data_memory/RAM.txt", charrom);
+		end
 		
 
 		// is entry 0
