@@ -13,8 +13,8 @@ module alu #(
     assign sum_res = operand1 + operand2;
     assign sub_res = operand1 - operand2;
     assign mult_res = operand1 * operand2;
-    assign rshift_res = operand1 >> operand2;
-    assign lshift_res = operand1 << operand2;
+	 assign rshift_res = (operand1 >> (operand2 % dataSize)) | (operand1 << (dataSize - (operand2 % dataSize)));
+    assign lshift_res = (operand1 << (operand2 % dataSize)) | (operand1 >> (dataSize - (operand2 % dataSize)));
     assign xor_res = operand1 ^ operand2;
     assign inc_res = operand1 + 16;
 
