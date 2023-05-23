@@ -1,16 +1,11 @@
 module top #(parameter N=8)(input clk, rst,
-									 output logic [31:0] WriteData, DataAdr, 
-									 output logic MemWrite);
-									 
-	logic [31:0] PC, instruction, ReadData;	
-	logic [31:0] text[703:0];
+									 output logic vgaclk, 
+									 output logic hsync, vsync, 
+									 output logic sync_b, blank_b, 
+									 output logic [7:0] r, g, b);
 	
-	instruction_memory rom (PC,instruction);
-	
-	processor proc(clk, rst, instruction, ReadData, PC,MemWrite, DataAdr, WriteData);
-						
-	
-	data_memory ram(clk, MemWrite,	DataAdr, WriteData, ReadData, text);
+	processor proc(clk, rst);
+	vga vga(clk, vgaclk, hsync, vsync, sync_b, blank_b,r, g, b);					
 	
 	
 endmodule

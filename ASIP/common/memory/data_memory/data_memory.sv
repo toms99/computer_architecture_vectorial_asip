@@ -1,7 +1,7 @@
 module data_memory #(
     parameter dataSize = 32,
     parameter addressingSize = 32,
-    parameter memorySize = 65534,
+    parameter memorySize = 10020,
     parameter vecSize = 4
 ) (
     input logic clk, write_enable,
@@ -14,7 +14,7 @@ module data_memory #(
 
     logic [7:0] RAM [memorySize-1:0];
 	initial begin
-		$readmemh("RAM.txt", RAM);
+		$readmemb("RAM.txt", RAM);
 	end
     
     always_ff @(posedge clk) begin
@@ -38,7 +38,7 @@ module data_memory #(
 	 
 	 always_ff @(negedge clk)begin
 		 if (write_enable) begin 
-			$writememh("RAM.txt",RAM);
+			$writememb("RAM.txt",RAM);
 		 end
 	 end
 endmodule
