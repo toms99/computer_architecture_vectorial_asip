@@ -1,0 +1,25 @@
+JMP inicio  $ 0
+JE Branch   $ 4
+JNE final   $ 8
+
+
+
+inicio:
+INC         $  c
+LOPIX R0    $  14
+SVPIX R2    $  18
+
+
+branch:
+LOSC R4 #125 $ 1c    
+LMEM R5 0xff $ 20
+
+final:
+XOR R4 R0 $  24
+ECAE R5 R1 $ 28
+DCAE R6 R2 $ 2c
+MUL R7 R3 $  30
+RSHF R4 R0 $ 34
+LSHF R5 R1 $ 38
+
+
