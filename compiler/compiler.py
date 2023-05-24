@@ -26,7 +26,7 @@ register_dict = {
 }
 
 vectorial_regs = ["R0", "R1", "R2", "R3"]
-escalar_regs = ["R4", "R5", "R6", "R7"]
+escalar_regs = ["R4", "R5", "R6", "R7", "R8", "R9", "R10", "R11" "R12", "R13", "R14", "R15"]
 
 op_code_dict = {
     "JMP": "1010",
@@ -250,9 +250,9 @@ def get_binary_from_hexa_dec(string):
         valor_hex = string[2:]
         try:
             decimal = int(valor_hex, 16)
-            if not 0 <= decimal <= 255:
+            if not 0 <= decimal <= 65535:
                 raise Exception(
-                    f"Error: Valor hexadecimal fuera de rango (0-FF): {string}"
+                    f"Error: Valor hexadecimal fuera de rango (0-FFFF): {string}"
                 )
             binario = bin(decimal)[2:].zfill(16)
             return binario
@@ -263,12 +263,12 @@ def get_binary_from_hexa_dec(string):
         valor_dec = string[1:]
         try:
             decimal = int(valor_dec)
-            if 0 <= decimal <= 255:
+            if 0 <= decimal <= 65535:
                 binario = bin(decimal)[2:].zfill(16)
                 return binario
             else:
                 raise Exception(
-                    f"Error: Valor decimal fuera de rango (0-255): {string}"
+                    f"Error: Valor decimal fuera de rango (0-65535): {string}"
                 )
         except ValueError:
             raise Exception(f"Error: Valor decimal inválido: {string}")
@@ -301,18 +301,10 @@ def compile_two_regs_inst(instruction):
     command_opcode = op_code_dict[command]
     r1 = instruction[1]
     r2 = instruction[2]
-    if r1 not in escalar_regs:
-        raise Exception(
-            f"En la instruccion: {command} {r1} {r2}, {r1} debe ser escalar."
-        )
-    if r2 not in vectorial_regs:
-        raise Exception(
-            f"En la instruccion: {command} {r1} {r2}, {r2} debe ser vectorial."
-        )
-    else:
-        r1_code = register_dict[r1]
-        r2_code = register_dict[r2]
-        return f"{command_opcode}{r1_code}{r2_code}000000000000"
+    
+    r1_code = register_dict[r1]
+    r2_code = register_dict[r2]
+    return f"{command_opcode}{r1_code}{r2_code}000000000000"
 
 
 def save_results(results, file_name):
@@ -395,11 +387,11 @@ def compile_instructions(instruction_matrix):
                     compiled_instruction = compile_two_regs_inst(instruction_list)
 
             else:
-                raise Exception(f"Instrucción inválida en la linea {line_counter}")
+                raise Exception(f"Instrucción inválida en la linea {line_counter} {instruction_list}")
 
         else:
             print(instruction_list)
-            raise Exception(f"Instrucción inválida en la linea {line_counter}")
+            raise Exception(f"Instrucción inválida en la linea {line_counter} {instruction_list}")
 
         compiled_instructios_result.append(compiled_instruction)
         line_counter += 1
