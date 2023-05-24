@@ -4,7 +4,11 @@ module processor #(
     parameter registerQuantity = 4,
     parameter selectionBits = 4,
     parameter vectorSize = 4
-) (input clk, rst);
+) (
+    input clk, rst,
+    input logic [9:0] vga_adr,
+    output [7:0] vga_pixel
+);
 
 	logic [instructionSize -1:0] instruction_d, ReadData;
 	logic [15:0] PC;
@@ -126,7 +130,7 @@ module processor #(
         .vecSize(vectorSize), .registerSize(registerSize)
     ) writeback_stage (
         .clk(clk), .reset(rst), .writeEnable(MemoryWrite_Mem), .alu_operand2(operand2_mem),
-        .writeRegFrom(WriteRegFrom_Mem),
+        .writeRegFrom(WriteRegFrom_Mem), .vga_adr(vga_adr), .vga_pixel(vga_pixel),
         .imm(Immediate_Mem), .alu_operand1(operand1_mem), .writeMemFrom(writeMemFrom_Mem),
         .aluResult(alu_result_mem), .writeBackData(writeBackData_Mem)
     );

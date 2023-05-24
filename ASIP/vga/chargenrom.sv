@@ -4,7 +4,7 @@ module chargenrom( input logic [9:0] x, y, input logic inrect, output logic [7:0
 
 		// Initialize ROM with characters from text file
 		initial
-		$readmemb("../common/memory/data_memory/RAM.txt", charrom);
+		$readmemb("RAM.txt", charrom);
 		
 
 		// is entry 0

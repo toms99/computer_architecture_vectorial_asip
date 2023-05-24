@@ -6,7 +6,9 @@ module stage_writeback #(
    input [1:0] writeRegFrom,
    input [registerSize-1:0] imm,
    input [vecSize-1:0] [registerSize-1:0] aluResult, alu_operand2, alu_operand1,
-   output [vecSize-1:0] [registerSize-1:0] writeBackData
+   input [9:0] vga_adr,
+   output [vecSize-1:0] [registerSize-1:0] writeBackData,
+   output logic [7:0] vga_pixel
 );
     
     logic [vecSize-1:0] [registerSize-1:0] readData, extended_imm, imm_delayed,
@@ -31,7 +33,7 @@ module stage_writeback #(
         .clk(clk),
         .write_enable(writeEnable), .DataAdr(address),
         .toWrite_data(writeData),
-        .read_data(readData)
+        .read_data(readData), .vgaAdr(vga_adr), .vgaPixel(vga_pixel)
     );
 
     vector_extender #(

@@ -5,9 +5,10 @@ module data_memory #(
     parameter vecSize = 4
 ) (
     input logic clk, write_enable,
-    input logic [addressingSize-1:0] DataAdr,
+    input logic [addressingSize-1:0] DataAdr, vgaAdr,
     input logic [vecSize-1:0] [dataSize-1:0] toWrite_data,
-    output logic [vecSize-1:0] [dataSize-1:0] read_data
+    output logic [vecSize-1:0] [dataSize-1:0] read_data,
+    output logic [7:0] vgaPixel
 );
     parameter bytes_in_addr = dataSize / 8;
     parameter bits_to_address_bytes_in_addr = $clog2(bytes_in_addr);
@@ -41,4 +42,6 @@ module data_memory #(
 			$writememb("RAM.txt",RAM);
 		 end
 	 end
+
+     assign vgaPixel = RAM[vgaAdr];
 endmodule

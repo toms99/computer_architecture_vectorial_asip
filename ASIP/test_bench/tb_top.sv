@@ -1,11 +1,11 @@
 module tb_top();
 	logic clk;
 	logic reset;
-	logic [31:0] WriteData, DataAdr;
-	logic MemWrite;
+    logic vgaclk, hsync, vsync, sync_b, blank_b;
+    logic [7:0] r, g, b;
 	// instantiate device to be tested
 	//Device under test
-	top dut(clk, reset, WriteData, DataAdr, MemWrite);
+	top dut(clk, reset, vgaclk, hsync, vsync, sync_b, blank_b, r, g, b);
 	// initialize test
 	initial begin
 		reset <= 1; #5; 
