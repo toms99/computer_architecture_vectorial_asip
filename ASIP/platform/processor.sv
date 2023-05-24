@@ -4,7 +4,8 @@ module processor #(
     parameter registerQuantity = 4,
     parameter selectionBits = 4,
     parameter vectorSize = 4
-) (input clk, rst);
+) (input clk, rst,
+	output logic fetchActive, regWrEnDe, regWrEnEx, regWrEnMem, regWrEnChip);
 
 	logic [instructionSize -1:0] instruction_d, ReadData;
 	logic [15:0] PC;
@@ -141,5 +142,10 @@ module processor #(
 
 	 assign {RegToWrite_chip, regWriteEnVec_chip, regWriteEnSc_chip} = condensed_chip_out;
 
+	 
+	 assign regWrEnDe = regWriteEnSc_dec | regWriteEnVec_dec;
+	 assign regWrEnEx = regWriteEnSc_ex | regWriteEnVec_ex;
+	 assign regWrEnMem = regWriteEnSc_Mem | regWriteEnVec_Mem;
+	 assign regWrEnChip = regWriteEnSc_chip | regWriteEnVec_chip;
 	 
 endmodule
