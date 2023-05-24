@@ -8,10 +8,10 @@ module processor #(
     input clk, rst,
     input mode_xor,
     input mode_rshift,
-    input mode_lshift
+    input mode_lshift,
     input mode_ecae,
     input mode_dcae,
-    input mode_mul,
+    input mode_mul
 );
 
 	logic [instructionSize -1:0] instruction_d, ReadData;
