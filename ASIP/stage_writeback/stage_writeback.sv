@@ -7,6 +7,7 @@ module stage_writeback #(
    input [registerSize-1:0] imm,
    input [vecSize-1:0] [registerSize-1:0] aluResult, alu_operand2, alu_operand1,
    input [9:0] vga_adr,
+   input [2:0] mode,
    output [vecSize-1:0] [registerSize-1:0] writeBackData,
    output logic [7:0] vga_pixel
 );
@@ -36,6 +37,7 @@ module stage_writeback #(
             writeData[3][7:0], writeData[2][7:0],
             writeData[1][7:0], writeData[0][7:0]
         }),
+        .mode(mode),
         .read_data(readData)
     );
 

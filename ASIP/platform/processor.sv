@@ -4,7 +4,15 @@ module processor #(
     parameter registerQuantity = 4,
     parameter selectionBits = 4,
     parameter vectorSize = 4
-) (input clk, rst);
+) (
+    input clk, rst,
+    input mode_xor,
+    input mode_rshift,
+    input mode_lshift
+    input mode_ecae,
+    input mode_dcae,
+    input mode_mul,
+);
 
 	logic [instructionSize -1:0] instruction_d, ReadData;
 	logic [15:0] PC;
@@ -127,6 +135,9 @@ module processor #(
     ) writeback_stage (
         .clk(clk), .reset(rst), .writeEnable(MemoryWrite_Mem), .alu_operand2(operand2_mem),
         .writeRegFrom(WriteRegFrom_Mem),
+        .mode({
+            mode_mul, mode_dcae, mode_ecae,
+            mode_lshift, mode_rshift, mode_xor}),
         .imm(Immediate_Mem), .alu_operand1(operand1_mem), .writeMemFrom(writeMemFrom_Mem),
         .aluResult(alu_result_mem), .writeBackData(writeBackData_Mem)
     );

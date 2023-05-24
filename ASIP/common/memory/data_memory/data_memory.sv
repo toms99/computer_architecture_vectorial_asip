@@ -6,6 +6,7 @@ module data_memory #(
 ) (
     input logic clk, write_enable,
     input logic [addressingSize-1:0] DataAdr,
+    input [5:0] mode,
     input logic [vecSize-1:0] [dataSize-1:0] toWrite_data,
     output logic [vecSize-1:0] [dataSize-1:0] read_data
 );
@@ -34,6 +35,7 @@ module data_memory #(
                                     i * bytes_in_addr + j];
             end
         end
+        RAM[10004] <= {2'b0, mode};
     end
 	 
 	 always_ff @(negedge clk)begin
