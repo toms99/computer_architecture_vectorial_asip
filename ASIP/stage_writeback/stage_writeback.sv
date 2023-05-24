@@ -6,7 +6,9 @@ module stage_writeback #(
    input [1:0] writeRegFrom,
    input [registerSize-1:0] imm,
    input [vecSize-1:0] [registerSize-1:0] aluResult, alu_operand2, alu_operand1,
-   output [vecSize-1:0] [registerSize-1:0] writeBackData
+   input [9:0] vga_adr,
+   output [vecSize-1:0] [registerSize-1:0] writeBackData,
+   output logic [7:0] vga_pixel
 );
     
     logic [vecSize-1:0] [registerSize-1:0] extended_imm, imm_delayed,
@@ -17,12 +19,11 @@ module stage_writeback #(
 
 	  // TODO: Does this alu_operand2 has to be delayed as well?
     assign address = writeMemFrom ? alu_operand2[0] : imm;
-	 assign writeData = writeMemFrom ? alu_operand1 : aluResult;
+	assign writeData = writeMemFrom ? alu_operand1 : aluResult;
 	 
 	 
 	pipe_vect #(2, registerSize, vecSize) p_mem_chip(clk, rst, writeRegFrom, writeData, extended_imm, matrix_zero,
 													 writeRegFrom_delayed, writeData_delayed, imm_delayed, matrix_zero);
-     
 
     data_memory #(
         .dataSize(8),
