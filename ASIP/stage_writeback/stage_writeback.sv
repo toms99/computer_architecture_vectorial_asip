@@ -9,8 +9,9 @@ module stage_writeback #(
    output [vecSize-1:0] [registerSize-1:0] writeBackData
 );
     
-    logic [vecSize-1:0] [registerSize-1:0] readData, extended_imm, imm_delayed,
+    logic [vecSize-1:0] [registerSize-1:0] extended_imm, imm_delayed,
         writeData_delayed, writeData, matrix_zero;
+    logic [vecSize-1:0] [7:0] readData;
     logic [registerSize-1:0] address;
 	logic [1:0] writeRegFrom_delayed;
 
@@ -24,13 +25,16 @@ module stage_writeback #(
      
 
     data_memory #(
-        .dataSize(registerSize),
+        .dataSize(8),
         .addressingSize(registerSize),
         .vecSize(vecSize)
     ) data_mem (
         .clk(clk),
         .write_enable(writeEnable), .DataAdr(address),
-        .toWrite_data(writeData),
+        .toWrite_data({
+            writeData[3][7:0], writeData[2][7:0],
+            writeData[1][7:0], writeData[0][7:0]
+        }),
         .read_data(readData)
     );
 
@@ -43,7 +47,12 @@ module stage_writeback #(
 	  logic [vecSize-1:0] [registerSize-1:0] writeBackDataTMP;
 	 always_comb begin
 		case (writeRegFrom_delayed)
-			0: writeBackDataTMP = readData;
+			0:begin 
+                writeBackDataTMP[0][7:0] = readData[0];
+                writeBackDataTMP[1][7:0] = readData[1];
+                writeBackDataTMP[2][7:0] = readData[2];
+                writeBackDataTMP[3][7:0] = readData[3];
+            end 
 			1: writeBackDataTMP = writeData_delayed;
 			2: writeBackDataTMP = imm_delayed;
 		endcase

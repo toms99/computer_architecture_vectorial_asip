@@ -16,7 +16,7 @@ module alu #(
 	 assign rshift_res = (operand1 >> (operand2 % dataSize)) | (operand1 << (dataSize - (operand2 % dataSize)));
     assign lshift_res = (operand1 << (operand2 % dataSize)) | (operand1 >> (dataSize - (operand2 % dataSize)));
     assign xor_res = operand1 ^ operand2;
-    assign inc_res = operand1 + 16;
+    assign inc_res = operand1 + 4;
 
     assign result = operation_select == 3'b001 ? xor_res :
                     operation_select == 3'b010 ? sum_res :
