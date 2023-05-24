@@ -1,4 +1,4 @@
-module vga(input logic clk, output logic vgaclk, output logic hsync, vsync, output logic sync_b, blank_b, output logic [7:0] r, g, b);
+module vga(input logic clk, start, output logic vgaclk, output logic hsync, vsync, output logic sync_b, blank_b, output logic [7:0] r, g, b);
 		
 		logic [9:0] x, y;
 		
@@ -8,6 +8,6 @@ module vga(input logic clk, output logic vgaclk, output logic hsync, vsync, outp
 		vgaController vgaCont(vgaclk, hsync, vsync, sync_b, blank_b, x, y);
 		
 		// User-defined module to determine pixel color
-		videoGen videoGen(x, y,clk, r, g, b);
+		videoGen videoGen(x, y,clk, start, r, g, b);
 
 endmodule
